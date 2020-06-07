@@ -1,6 +1,5 @@
 from datetime import datetime
 from app import db
-from .ExerciseXBlock import exerciseXblock
 
 
 class Block(db.Model):
@@ -9,10 +8,10 @@ class Block(db.Model):
 
     id_block = db.Column(db.Integer, db.Sequence(
         'id_block_seq'), primary_key=True, unique=True)
-    sessionid = db.Column(db.Integer, db.ForeignKey(
-        'lacucha.sessions.id_session'), nullable=False)
+    id_session = db.Column(db.Integer, db.ForeignKey(
+        'lacucha.sessions.id_session', ondelete="cascade"), nullable=False)
     exercises = db.relationship(
-        'Exercise', secondary=exerciseXblock, lazy='subquery', backref=db.backref('blocks', lazy=True))
+        'ExerciseXBlock', lazy='subquery', backref=db.backref('blocks', lazy=True))
     block_num = db.Column(db.Integer)
     sets = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -30,8 +29,8 @@ class Block(db.Model):
         return {
             "id": self.id_block,
             "blocks": [exercise.to_json() for exercise in self.exercises],
-            "block_num": self.block_num,
+            "blockNum": self.block_num,
             "sets": self.sets,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "createdAt": self.created_at,
+            "updatedAt": self.updated_at
         }
