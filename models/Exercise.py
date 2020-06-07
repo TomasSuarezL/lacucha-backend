@@ -25,6 +25,6 @@ class Exercise(db.Model):
             "id": self.id_exercise,
             "name": self.name,
             "zone": self.zone,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "createdAt": self.created_at,
+            "updatedAt": self.updated_at
         }

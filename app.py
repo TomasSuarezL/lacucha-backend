@@ -1,6 +1,6 @@
 import os
 import config
-from datetime import datetime
+from datetime import date
 from flask import Flask, jsonify, request, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -18,21 +18,24 @@ exerciseSchema = {
     'type': 'dict',
     'schema': {
         "name": {'type': 'string', 'required': True},
+        "zone": {'type': 'string', 'required': False},
+        "load": {'type': 'float', 'required': False},
+        "reps": {'type': 'integer', 'required': True}
     }
 }
 
 blockSchema = {
     'type': 'dict',
     'schema': {
-        'block_num': {'type': 'integer', 'required': True},
+        'blockNum': {'type': 'integer', 'required': True},
         'sets': {'type': 'integer', 'required': True},
         "exercises": {'type': 'list', 'schema': exerciseSchema}
     }
 }
 
 sessionSchema = {
-    'started_at': {'type': 'string', 'required': True},
-    'finished_at': {'type': 'string', 'required': True},
+    'startedAt': {'type': 'string', 'required': True},
+    'finishedAt': {'type': 'string', 'required': True},
     'blocks': {'type': 'list', 'schema': blockSchema},
 }
 
@@ -49,7 +52,7 @@ def index():
 @app.route('/sessions', methods=['GET', 'POST'])
 def sessions():
     if request.method == 'POST':
-        from models import Session, Block, Exercise
+        from models import Session, Block, Exercise, ExerciseXBlock
 
         bodySession = request.get_json(force=True)
 
@@ -59,11 +62,11 @@ def sessions():
                 abort(
                     400, f"Invalid Body. Errors: {str(sessionValidator.errors)} \n post schema: {str(sessionSchema)}")
 
-            blocks = [Block(exercises=Exercise.query.filter(Exercise.name.in_([exercise["name"] for exercise in block.get('exercises')])).all(), block_num=block.get(
-                'block_num'), sets=block.get('sets')) for block in bodySession.get('blocks')]
+            blocks = [Block(exercises=[ExerciseXBlock(exercise=Exercise.query.filter_by(name=exercise.get("name")).first(), weight=exercise.get("load"), repetitions=exercise.get("reps")) for exercise in block.get('exercises')], block_num=block.get(
+                'blockNum'), sets=block.get('sets')) for block in bodySession.get('blocks')]
 
             session = Session(blocks=blocks, started_at=bodySession.get(
-                'started_at'), finished_at=bodySession.get('finished_at'))
+                'startedAt'), finished_at=bodySession.get('finishedAt'))
 
             db.session.add(session)
             db.session.commit()
@@ -72,11 +75,21 @@ def sessions():
         except AttributeError as err:
             print(err)
             return err, 400
+        except:
+            return 400
 
     else:
         from models import Session
-        sessions = Session.query.all()
+        sessions = Session.query.order_by(Session.created_at.desc()).all()
         return jsonify([ses.to_json() for ses in sessions])
+
+
+@app.route('/todaySession', methods=['GET'])
+def todaySession():
+    from models import Session
+    session = Session.query.filter(Session.created_at >= date.today(
+    )).order_by(Session.created_at.desc()).first()
+    return jsonify(session.to_json() if session != None else session)
 
 
 @app.route('/exercises', methods=['GET', 'POST'])

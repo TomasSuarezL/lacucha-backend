@@ -27,8 +27,8 @@ class Session(db.Model):
         return {
             "id": self.id_session,
             "blocks": [block.to_json() for block in self.blocks],
-            "started_at": self.started_at,
-            "finished_at": self.finished_at,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "startedAt": self.started_at,
+            "finishedAt": self.finished_at,
+            "createdAt": self.created_at,
+            "updatedAt": self.updated_at
         }
