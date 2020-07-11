@@ -33,15 +33,6 @@ def test_crear_ejercicio_model(db):
     assert ejercicio.nombre == "Ejercicio"
 
 
-def test_crear_ejercicio_sin_parametros(db):
-    with pytest.raises(TypeError):
-        nuevoEjercicio = Ejercicio(
-            patron=PatronMovimiento(nombre="Zona Prueba"))
-
-    with pytest.raises(TypeError):
-        nuevoEjercicio = Ejercicio(nombre="Ejercicio")
-
-
 # SERVICE TESTS
 def test_service_get_ejercicio_por_nombre(db):
     create_ejercicio_db(db)

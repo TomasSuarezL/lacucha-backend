@@ -23,15 +23,4 @@ def create_app(_config=None):
     db.init_app(app)
     CORS(app)
 
-    @api.route('/hello')
-    class HelloWorld(Resource):
-        def get(self):
-            return {'hello': 'world'}
-
-    @app.route('/health')
-    def index():
-        result = db.session.execute('SELECT 1')
-        print(result)
-        return "Ok"
-
     return app
