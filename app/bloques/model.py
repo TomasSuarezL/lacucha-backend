@@ -22,7 +22,7 @@ class Bloque(db.Model):
         self.series = series
 
     def __repr__(self):
-        return '<Bloque {}>'.format(self.id_bloque)
+        return '<Bloque {}>'.format(self.id_bloques)
 
     def to_json(self):
         return {
@@ -54,7 +54,7 @@ class EjercicioXBloque(db.Model):
         self.carga = carga
 
     def __repr__(self):
-        return '<EjercicioXBloque {}>'.format(self.id_ejercicioxbloque)
+        return '<EjercicioXBloque {}>'.format(self.id_ejerciciosxbloque)
 
     def to_json(self):
         return {

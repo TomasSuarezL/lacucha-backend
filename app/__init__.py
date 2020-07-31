@@ -23,4 +23,10 @@ def create_app(_config=None):
     db.init_app(app)
     CORS(app)
 
+    @app.route('/health')
+    def health():
+        result = db.session.execute('SELECT 1')
+        print(result)
+        return "Ok"
+
     return app

@@ -1,3 +1,4 @@
+from app.ejercicios.model import Ejercicio, PatronMovimiento
 import os
 import config
 
@@ -26,3 +27,12 @@ def db(app):
         yield db
         db.session.commit()
         db.drop_all()
+
+
+def create_ejercicio_db(db):
+    patron = PatronMovimiento(nombre="Zona Prueba")
+
+    nuevoEjercicio = Ejercicio(nombre="Ejercicio", patron=patron)
+
+    db.session.add(nuevoEjercicio)
+    db.session.commit()

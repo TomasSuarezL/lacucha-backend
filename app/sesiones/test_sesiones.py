@@ -1,31 +1,24 @@
+from app.conftest import create_ejercicio_db
 from app.bloques.model import Bloque, EjercicioXBloque
 from app.ejercicios.model import Ejercicio
 from app.sesiones.model import Sesion
+from app.sesiones.service import SesionService
 from datetime import datetime, timedelta
 
 
-# def test_crear_sesion(db):
+def test_crear_sesion(db):
+    sesion_data = {"empezado": str(datetime.utcnow()),
+                   "finalizado": str(datetime.utcnow() + timedelta(hours=1)),
+                   "bloques": [{"series": 10,
+                                "numBloque": 1,
+                                "ejercicios": [{"ejercicio": {"nombre": "Ejercicio"}, "repeticiones": 10, "carga": 20.1}]}
+                               ]
+                   }
 
-#     pushUps = db.session.query(Ejercicio).filter_by(
-#         nombre="Traditional Push-ups").first()
-#     assert pushUps.nombre == "Traditional Push-ups"
+    create_ejercicio_db(db)
 
-#     bloque1 = Bloque(ejercicios=[EjercicioXBloque(
-#         ejercicio=pushUps, repeticiones=10, carga=10
-#     )], num_bloque=1, series=4)
+    SesionService.create_sesion(sesion_data)
 
-#     nuevaSesion = Sesion(bloques=[bloque1],
-#                          fecha_empezado=datetime.now() +
-#                          timedelta(hours=-1),
-#                          fecha_finalizado=datetime.now())
+    sesiones = Sesion.query.all()
 
-#     db.session.add(nuevaSesion)
-#     db.session.commit()
-
-#     sesion = db.session.query(Sesion).get(nuevaSesion.id_sesiones)
-
-#     assert len(sesion.bloques) == 1
-#     assert sesion.bloques[0].series == 4
-#     assert sesion.bloques[0].ejercicios[0].repeticiones == 10
-#     assert sesion.bloques[0].ejercicios[0].ejercicio.nombre == "Traditional Push-ups"
-#     assert sesion.bloques[0].ejercicios[0].ejercicio.patron.nombre == pushUps.patron.nombre
+    assert len(sesiones) == 1
