@@ -1,16 +1,8 @@
 import pytest
+from manage import seed
+from app.conftest import create_ejercicio_db
 from app.ejercicios.model import Ejercicio, PatronMovimiento
 from app.ejercicios.service import EjercicioService
-from manage import seed
-
-
-def create_ejercicio_db(db):
-    patron = PatronMovimiento(nombre="Zona Prueba")
-
-    nuevoEjercicio = Ejercicio(nombre="Ejercicio", patron=patron)
-
-    db.session.add(nuevoEjercicio)
-    db.session.commit()
 
 
 @pytest.mark.skip(reason="Trivial test of db seed")
@@ -56,12 +48,8 @@ def test_service_crear_ejercicio_nuevo(db):
     db.session.add(patron)
     db.session.commit()
 
-    result = EjercicioService.create_ejercicio(
+    ejercicio = EjercicioService.create_ejercicio(
         nombre="Nuevo Ejercicio", patron="Tren Superior")
-
-    assert type(result) == str
-
-    ejercicio = Ejercicio.query.filter_by(nombre="Nuevo Ejercicio").first()
 
     assert isinstance(ejercicio, Ejercicio)
     assert ejercicio.nombre == "Nuevo Ejercicio"
@@ -70,14 +58,11 @@ def test_service_crear_ejercicio_nuevo(db):
 
 @pytest.mark.parametrize("nombre,patron", [("", "Tren Superior"), (None, "Tren Superior"), ("Nuevo Ejercicio", "Tren Superior"), ("Nuevo Ejercicio", None)])
 def test_service_no_crea_ejercicio_con_patron_inexistente(db, nombre, patron):
-    result = EjercicioService.create_ejercicio(
+
+    ejercicio = EjercicioService.create_ejercicio(
         nombre=nombre, patron=patron)
 
-    assert type(result) == str
-
-    ejercicio = Ejercicio.query.filter_by(nombre="Nuevo Ejercicio").first()
-
-    assert ejercicio is None
+    assert type(ejercicio) is str
 
 
 # CONTROLLER TESTS
