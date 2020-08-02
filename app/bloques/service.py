@@ -1,6 +1,7 @@
 from marshmallow.utils import EXCLUDE
 from marshmallow.exceptions import ValidationError
 from app.ejercicios.model import Ejercicio
+from app.ejercicios.service import EjercicioService
 from typing import List
 from .model import Bloque, EjercicioXBloque
 from .schema import BloqueSchema, EjercicioXBloqueSchema
@@ -23,8 +24,8 @@ class BloqueService:
                 Returns:
                         EjercicioXBloque: objeto creado si el ejercicio ingresado es valido.  
         '''
-        ejercicio = Ejercicio.query.filter_by(
-            nombre=ejercicio_bloque["ejercicio"]["nombre"]).first()
+        ejercicio = EjercicioService.get_por_nombre(
+            ejercicio_bloque["ejercicio"]["nombre"])
         if (ejercicio is None):
             raise ValidationError("Ejercicio Inválido")
 
