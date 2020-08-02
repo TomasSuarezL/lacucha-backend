@@ -1,10 +1,9 @@
 import os
 import config
-from datetime import date
 
-from flask import Flask, jsonify, request, abort
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_restx import Resource, Api
+from flask_restx import Api
 from flask_cors import CORS
 
 from .routes import register_routes

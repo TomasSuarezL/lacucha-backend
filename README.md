@@ -42,3 +42,24 @@ Additionally, this file exposes a `seed` method that can be used to populate som
 ## Deploy
 
 Heroku - hooked to Github repo (master branch).
+
+## Development
+
+Clone github repo. On the root folder, install dependencies using:
+
+```
+pip install -r requirements.txt
+```
+
+Create a `.env` file with Databases URLs:
+
+```
+DATABASE_URL="postgresql://postgres_user:postgres_password@prod_server:5432/lacucha"
+TEST_DATABASE_URL="postgresql://postgres_user:postgres_password@127.0.0.1:5432/lacucha_tests"
+```
+
+Run the test, on the root folder:
+
+```
+pytest
+```
