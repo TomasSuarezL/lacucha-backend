@@ -40,10 +40,10 @@ class SesionResource(Resource):
             return 400
 
 
-# @api.route('/todaySession')
-# class TodaySesionResource(Resource):
-#     def get(self):
-#         from .model import Sesion
-#         sesion = Sesion.query.filter(Sesion.creado_en >= date.today(
-#         )).order_by(Sesion.creado_en.desc()).first()
-#         return jsonify(sesion.to_json() if sesion != None else sesion)
+@api.route('/todaySession')
+class TodaySesionResource(Resource):
+    def get(self):
+        from .model import Sesion
+        sesion = Sesion.query.filter(Sesion.creado_en >= date.today(
+        )).order_by(Sesion.creado_en.desc()).first()
+        return jsonify(sesion.to_json() if sesion != None else sesion)

@@ -29,3 +29,6 @@ def create_app(_config=None):
         return "Ok"
 
     return app
+
+
+create_app()
