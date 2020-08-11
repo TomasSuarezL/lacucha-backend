@@ -24,7 +24,17 @@ class EjercicioService:
         return Ejercicio.query.filter(Ejercicio.patron == _patron).all()
 
     @staticmethod
-    def create_ejercicio(nombre: str, patron: str) -> str:
+    def create_ejercicio(nombre: str, patron: str) -> Ejercicio:
+        '''
+        Crea un objeto de la clase Ejercicio con el nombre y patron indicados 
+
+                Parameters:
+                        nombre (string): El nombre del ejercicio
+                        patron: Patron de movimiento del
+
+                Returns:
+                        Ejercicio: objeto creado.  
+        '''
         if(nombre is None or nombre == ""):
             return "Nombre inválido."
 
@@ -39,4 +49,4 @@ class EjercicioService:
         db.session.add(nuevoEjercicio)
         db.session.commit()
 
-        return "Ejercicio Creado"
+        return nuevoEjercicio

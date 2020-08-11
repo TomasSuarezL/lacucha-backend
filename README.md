@@ -7,7 +7,7 @@
 - Flask-RESTx
 - Flask-SQLAlchemy
 - Flask-Migrate
-- Cerberus
+- Marshmallow
 
 ## Project Organization
 
@@ -18,11 +18,12 @@ Simplifying, the structure consists of dividing the code into "logic units" of o
 - Model: where we define the entity class. This is the columns of the entity using Flask-SQLAlchemy, constructor and class methods.
 - Service: where we define all the possible operations on the entity.
 - Controller: where we put the API routes that we are going to expose, related to the logic unit.
+- Schema: object for serialization and desearlization defined using Marshmallow.
 - Tests: finally we create a test file where we will write the tests associated with the logic unit. The tests focus on the service, and non-trivial controller methods (mostly integration tests).
 
 On the `__init__` file of each unit subfolder we expose a method for registering the routes. The registration happens on the `routes.py` file in the root. We then call the route registering method (`register_routes`) exposed in `routes.py` to register all routes (this leverages FLASK-RESTx) on the app factory method.
 
-There are a couple of differences between this approach and the original. We did't include the Interface and Schema definitions for each unit and we use a single test file for the entire unit (instead of creating a file for each of the divisions).
+There are a couple of differences between this approach and the original. We did't include the Interface definitions for each unit and we use a single test file for the entire unit (instead of creating a file for each of the divisions).
 
 ## DB Model
 
@@ -41,3 +42,24 @@ Additionally, this file exposes a `seed` method that can be used to populate som
 ## Deploy
 
 Heroku - hooked to Github repo (master branch).
+
+## Development
+
+Clone github repo. On the root folder, install dependencies using:
+
+```
+pip install -r requirements.txt
+```
+
+Create a `.env` file with Databases URLs:
+
+```
+DATABASE_URL="postgresql://postgres_user:postgres_password@prod_server:5432/lacucha"
+TEST_DATABASE_URL="postgresql://postgres_user:postgres_password@127.0.0.1:5432/lacucha_tests"
+```
+
+Run the test, on the root folder:
+
+```
+pytest
+```
