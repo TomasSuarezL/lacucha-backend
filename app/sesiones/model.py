@@ -1,3 +1,5 @@
+from typing import List
+from app.bloques.model import EjercicioXBloque
 from datetime import datetime
 from app import db
 
@@ -14,7 +16,7 @@ class Sesion(db.Model):
     creado_en = db.Column(db.DateTime, default=datetime.utcnow)
     actualizado_en = db.Column(db.DateTime, default=None)
 
-    def __init__(self, bloques, fecha_empezado, fecha_finalizado):
+    def __init__(self, bloques: List[EjercicioXBloque], fecha_empezado: datetime, fecha_finalizado: datetime):
         self.bloques = bloques
         self.fecha_empezado = fecha_empezado
         self.fecha_finalizado = fecha_finalizado
