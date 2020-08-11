@@ -1,3 +1,4 @@
+from datetime import date
 from marshmallow.exceptions import ValidationError
 from marshmallow.utils import EXCLUDE
 from app.sesiones.schema import SesionSchema
@@ -11,6 +12,10 @@ class SesionService:
     @staticmethod
     def get_all_sesiones() -> List[Sesion]:
         return Sesion.query.all()
+
+    @staticmethod
+    def get_today_sesion() -> Sesion:
+        return Sesion.query.filter(Sesion.creado_en >= date.today()).order_by(Sesion.creado_en.desc()).first()
 
     @staticmethod
     def create_sesion(sesion: dict) -> Sesion:
