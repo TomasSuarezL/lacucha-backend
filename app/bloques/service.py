@@ -1,10 +1,7 @@
-from marshmallow.utils import EXCLUDE
 from marshmallow.exceptions import ValidationError
-from app.ejercicios.model import Ejercicio
 from app.ejercicios.service import EjercicioService
 from typing import List
 from .model import Bloque, EjercicioXBloque
-from .schema import BloqueSchema, EjercicioXBloqueSchema
 
 
 class BloqueService:

@@ -73,6 +73,4 @@ def test_post_bloque_valido(db, client):
     response = client.post(
         '/api/bloques', json=bloque_data,  follow_redirects=True).get_json()
 
-    print(response)
-
     assert response["series"] == 10

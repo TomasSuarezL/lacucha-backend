@@ -26,7 +26,4 @@ class SesionService:
         newSesion = Sesion(
             bloques=bloques, fecha_empezado=sesion["empezado"], fecha_finalizado=sesion["finalizado"])
 
-        db.session.add(newSesion)
-        db.session.commit()
-
         return newSesion

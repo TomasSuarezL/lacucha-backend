@@ -22,4 +22,7 @@ class EjercicioResource(Resource):
         _nombre = request.args.get('nombre', None)
         ejercicio = EjercicioService.create_ejercicio(_nombre, _patron)
 
+        db.session.add(ejercicio)
+        db.session.commit()
+
         return jsonify(ejercicio.to_json())

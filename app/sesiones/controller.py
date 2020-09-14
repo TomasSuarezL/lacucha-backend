@@ -1,3 +1,4 @@
+from app import db
 from flask import jsonify, request, abort
 from flask_accepts.decorators.decorators import accepts, responds
 from flask_restx import Namespace, Resource
@@ -35,15 +36,13 @@ class SesionResource(Resource):
 
         except AttributeError as err:
             print(err)
-            return err, 400
+            abort(400, err)
         except:
-            return 400
+            abort(400)
 
 
 @api.route('/todaySession')
 class TodaySesionResource(Resource):
     def get(self):
-        from .model import Sesion
-        sesion = Sesion.query.filter(Sesion.creado_en >= date.today(
-        )).order_by(Sesion.creado_en.desc()).first()
+        sesion = SesionService.get_today_sesion()
         return jsonify(sesion.to_json() if sesion != None else sesion)

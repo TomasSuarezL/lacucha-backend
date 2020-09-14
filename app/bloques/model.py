@@ -5,10 +5,10 @@ from app import db
 class Bloque(db.Model):
     __tablename__ = 'bloques'
 
-    id_bloques = db.Column(db.Integer, db.Sequence(
-        'bloques_id_bloques_seq'), primary_key=True, unique=True)
-    id_sesiones = db.Column(db.Integer, db.ForeignKey(
-        'sesiones.id_sesiones', ondelete="cascade"), nullable=False)
+    id_bloque = db.Column(db.Integer, db.Sequence(
+        'bloques_id_bloque_seq'), primary_key=True, unique=True)
+    id_sesion = db.Column(db.Integer, db.ForeignKey(
+        'sesiones.id_sesion', ondelete="cascade"), nullable=False)
     ejercicios = db.relationship(
         'EjercicioXBloque', lazy='subquery', backref=db.backref('bloques', lazy=True))
     num_bloque = db.Column(db.Integer)
@@ -22,7 +22,7 @@ class Bloque(db.Model):
         self.series = series
 
     def __repr__(self):
-        return '<Bloque {}>'.format(self.id_bloques)
+        return '<Bloque {}>'.format(self.id_bloque)
 
     def to_json(self):
         return {
@@ -42,7 +42,7 @@ class EjercicioXBloque(db.Model):
         "ejerciciosxbloque_id_ejerciciosxbloque_seq"), primary_key=True, unique=True)
     id_ejercicio = db.Column(db.Integer, db.ForeignKey(
         'ejercicios.id_ejercicio'))
-    id_bloque = db.Column(db.Integer, db.ForeignKey('bloques.id_bloques'))
+    id_bloque = db.Column(db.Integer, db.ForeignKey('bloques.id_bloque'))
     ejercicio = db.relationship("Ejercicio", uselist=False)
     bloque = db.relationship("Bloque", uselist=False)
     repeticiones = db.Column(db.Integer)
@@ -58,7 +58,7 @@ class EjercicioXBloque(db.Model):
 
     def to_json(self):
         return {
-            "id": self.id_ejercicioxbloque,
+            "id": self.id_ejerciciosxbloque,
             "ejercicio": self.ejercicio.nombre,
             "patron": self.ejercicio.patron.nombre,
             "carga": self.carga,
