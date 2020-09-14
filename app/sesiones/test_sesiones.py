@@ -18,11 +18,9 @@ def test_crear_sesion(db):
 
     create_ejercicio_db(db)
 
-    SesionService.create_sesion(sesion_data)
+    sesion = SesionService.create_sesion(sesion_data)
 
-    sesiones = Sesion.query.all()
-
-    assert len(sesiones) == 1
+    assert len(sesion.bloques) == 1
 
 
 def test_get_sesion_de_hoy(db):

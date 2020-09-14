@@ -29,6 +29,9 @@ class BloqueResource(Resource):
 
             newBloque = BloqueService.create_bloque(bloque)
 
+            db.session.add(newBloque)
+            db.session.commit()
+
             return newBloque
         except ValidationError as err:
             return err.messages, 422

@@ -46,7 +46,4 @@ class EjercicioService:
         nuevoEjercicio = Ejercicio(
             nombre=nombre, patron=_patron)
 
-        db.session.add(nuevoEjercicio)
-        db.session.commit()
-
         return nuevoEjercicio
