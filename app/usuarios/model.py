@@ -35,6 +35,7 @@ class Usuario(db.Model):
     email = db.Column(db.String(100), unique=True)
     nombre = db.Column(db.String(100), unique=True)
     apellido = db.Column(db.String(100), unique=True)
+    img_url = db.Column(db.String(250), unique=True)
     fecha_nacimiento = db.Column(db.DateTime)
     id_genero = db.Column(db.Integer, db.ForeignKey(
         'generos.id_genero'))
@@ -56,7 +57,8 @@ class Usuario(db.Model):
                  genero: Genero,
                  altura: float,
                  peso: float,
-                 nivel: Nivel
+                 nivel: Nivel,
+                 img_url: str
                  ):
         self.username = username
         self.email = email
@@ -67,6 +69,7 @@ class Usuario(db.Model):
         self.altura = altura
         self.peso = peso
         self.nivel = nivel
+        self.img_url = img_url
 
     def __repr__(self):
         return '<Usuario {}>'.format(self.id_usuario)

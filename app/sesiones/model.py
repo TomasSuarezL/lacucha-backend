@@ -10,7 +10,7 @@ class Sesion(db.Model):
     id_sesion = db.Column(db.Integer, db.Sequence(
         'sesion_id_sesion_seq'), primary_key=True, unique=True)
     id_mesociclo = db.Column(db.Integer, db.ForeignKey(
-        'mesociclos.id_mesociclo', ondelete="cascade"), nullable=False)
+        'mesociclos.id_mesociclo', ondelete="cascade"), nullable=True)
     bloques = db.relationship(
         'Bloque', lazy='subquery', backref=db.backref('sesiones', lazy=True))
     fecha_empezado = db.Column(db.DateTime, default=datetime.utcnow)

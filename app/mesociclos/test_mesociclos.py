@@ -2,7 +2,7 @@ from app.mesociclos.model import Mesociclo
 import pytest
 from marshmallow.exceptions import ValidationError
 from app.mesociclos.service import MesocicloService
-from app.conftest import create_ejercicio_db, create_usuario_db
+from app.conftest import create_usuario_db
 from datetime import datetime, timedelta
 
 
