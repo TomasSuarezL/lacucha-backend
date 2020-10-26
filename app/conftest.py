@@ -1,4 +1,4 @@
-from app.mesociclos.model import EstadoMesociclo, Objetivo, Organizacion
+from app.mesociclos.model import EstadoMesociclo, Mesociclo, Objetivo, Organizacion
 from app.usuarios.model import Genero, Nivel, Usuario
 from datetime import datetime
 from app.ejercicios.model import Ejercicio, PatronMovimiento
@@ -95,21 +95,10 @@ def create_reference_data(db):
     db.session.commit()
 
 
-def create_ejercicio_db(db):
-    patron = PatronMovimiento(nombre="Zona Prueba")
-
-    nuevoEjercicio = Ejercicio(nombre="Ejercicio", patron=patron)
-
-    db.session.add(nuevoEjercicio)
-    db.session.commit()
-
-
 def create_sesion_db(db):
-    ejSuperior = Ejercicio.query.first()
-    ejInferior = Ejercicio.query.first()
-    ejMedia = Ejercicio.query.first()
-
-    db.session.add_all([ejSuperior, ejInferior, ejMedia])
+    ejSuperior = db.session.query(Ejercicio).first()
+    ejInferior = db.session.query(Ejercicio).first()
+    ejMedia = db.session.query(Ejercicio).first()
 
     exbSuperior = EjercicioXBloque(
         ejercicio=ejSuperior, repeticiones=10, carga=30)
@@ -133,7 +122,7 @@ def create_usuario_db(db):
     genero = db.session.query(Genero).first()
     nivel = db.session.query(Nivel).first()
 
-    user = Usuario(
+    usuario = Usuario(
         username="usuarioprueba",
         email="usuario@prueba.com",
         nombre="Usuario",
@@ -143,7 +132,33 @@ def create_usuario_db(db):
         altura=1.77,
         peso=68,
         nivel=nivel,
+        img_url="prueba.com/img"
     )
 
-    db.session.add(user)
+    db.session.add(usuario)
+    db.session.commit()
+
+
+def create_mesociclo_db(db):
+    usuario = db.session.query(Usuario).first()
+    objetivo = db.session.query(Objetivo).first()
+    organizacion = db.session.query(Organizacion).first()
+    ej_superior = db.session.query(Ejercicio).filter_by(
+        nombre="Traditional Push-ups").first()
+    ej_inferior = db.session.query(Ejercicio).filter_by(
+        nombre="Bulgarian Squats").first()
+
+    mesociclo = Mesociclo(
+        usuario=usuario,
+        nivel=usuario.nivel,
+        objetivo=objetivo,
+        organizacion=organizacion,
+        principal_tren_inferior=ej_inferior,
+        principal_tren_superior=ej_superior,
+        semanas_por_mesociclo=4,
+        sesiones_por_semana=3,
+        sesiones=[]
+    )
+
+    db.session.add(mesociclo)
     db.session.commit()

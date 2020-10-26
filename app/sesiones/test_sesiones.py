@@ -1,4 +1,4 @@
-from app.conftest import create_ejercicio_db, create_sesion_db
+from app.conftest import create_mesociclo_db, create_sesion_db, create_usuario_db
 from app.bloques.model import Bloque, EjercicioXBloque
 from app.ejercicios.model import Ejercicio
 from app.sesiones.model import Sesion
@@ -12,11 +12,9 @@ def test_crear_sesion(db):
                    "finalizado": str(datetime.utcnow() + timedelta(hours=1)),
                    "bloques": [{"series": 10,
                                 "numBloque": 1,
-                                "ejercicios": [{"ejercicio": {"nombre": "Ejercicio"}, "repeticiones": 10, "carga": 20.1}]}
+                                "ejercicios": [{"ejercicio": {"nombre": "Traditional Push-ups"}, "repeticiones": 10, "carga": 20.1}]}
                                ]
                    }
-
-    create_ejercicio_db(db)
 
     sesion = SesionService.create_sesion(sesion_data)
 
@@ -25,6 +23,7 @@ def test_crear_sesion(db):
 
 def test_get_sesion_de_hoy(db):
     # ARRANGE
+    create_usuario_db(db)
     create_sesion_db(db)
 
     # ACT

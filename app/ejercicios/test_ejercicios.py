@@ -1,14 +1,10 @@
 import pytest
-from manage import seed
-from app.conftest import create_ejercicio_db
 from app.ejercicios.model import Ejercicio, PatronMovimiento
 from app.ejercicios.service import EjercicioService
 
 
 @pytest.mark.skip(reason="Trivial test of db seed")
 def test_ejercicios_seedeados(db):
-    seed()
-
     row = Ejercicio.query.filter_by(
         nombre="Traditional Push-ups").first()
 
@@ -17,19 +13,15 @@ def test_ejercicios_seedeados(db):
 
 
 def test_crear_ejercicio_model(db):
-    create_ejercicio_db(db)
-
     ejercicio = Ejercicio.query.filter_by(
-        nombre="Ejercicio").first()
+        nombre="Traditional Push-ups").first()
 
-    assert ejercicio.nombre == "Ejercicio"
+    assert ejercicio.nombre == "Traditional Push-ups"
 
 
 # SERVICE TESTS
 def test_service_get_ejercicio_por_nombre(db):
-    create_ejercicio_db(db)
-
-    ejercicio = EjercicioService.get_por_nombre("Ejercicio")
+    ejercicio = EjercicioService.get_por_nombre("Traditional Push-ups")
 
     assert isinstance(ejercicio, Ejercicio)
     assert ejercicio.nombre == "Ejercicio"
@@ -67,9 +59,7 @@ def test_service_no_crea_ejercicio_con_patron_inexistente(db, nombre, patron):
 
 # CONTROLLER TESTS
 def test_controller_list_ejercicios(db, client):
-    create_ejercicio_db(db)
-
-    rv = client.get('/api/ejercicios?patron=Zona Prueba',
+    rv = client.get('/api/ejercicios?patron=Tren Superior',
                     follow_redirects=True).get_json()
     print(rv)
 

@@ -13,5 +13,6 @@ class UsuarioSchema(Schema):
     altura = fields.Float(required=True)
     peso = fields.Float(required=True)
     nivel = fields.Str(required=True)
+    img_url = fields.Str()
     creado_en = fields.DateTime(dump_only=True)
     actualizado_en = fields.DateTime(dump_only=True)
