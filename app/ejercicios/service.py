@@ -19,6 +19,9 @@ class EjercicioService:
 
     @staticmethod
     def get_por_nombre_patron(patron: str) -> List[Ejercicio]:
+        if (patron is None):
+            return Ejercicio.query.all()
+
         _patron = PatronMovimiento.query.filter(
             PatronMovimiento.nombre == patron).first()
         return Ejercicio.query.filter(Ejercicio.patron == _patron).all()

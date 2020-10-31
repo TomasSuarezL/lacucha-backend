@@ -15,17 +15,12 @@ class BloqueResource(Resource):
     def get(self):
         return jsonify("Not implemented yet")
 
-    @accepts(schema=BloqueSchema, api=api)
+    @accepts(schema=BloqueSchema(session=db.session), api=api)
     @responds(schema=BloqueSchema)
     def post(self):
-        bloque_schema = BloqueSchema(unknown=EXCLUDE)
-
         try:
-            bloque_data = request.get_json()
-            if not bloque_data:
-                return {"message": "No se recibió información del bloque"}, 400
-
-            bloque = bloque_schema.load(bloque_data)
+            # We can access to the object loaded by flask_accepts with request.parsed_obj
+            bloque = request.parsed_obj
 
             newBloque = BloqueService.create_bloque(bloque)
 

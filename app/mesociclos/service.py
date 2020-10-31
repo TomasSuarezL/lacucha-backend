@@ -1,10 +1,7 @@
 from marshmallow.exceptions import ValidationError
 from typing import List
-from .model import Mesociclo, Objetivo, Organizacion
+from .model import Mesociclo
 from app.sesiones.service import SesionService
-from app.ejercicios.service import EjercicioService
-from app.usuarios.service import UsuarioService
-from app.usuarios.model import Nivel
 
 
 class MesocicloService:
@@ -13,62 +10,24 @@ class MesocicloService:
         return Mesociclo.query.all()
 
     @staticmethod
-    def create_mesociclo(mesociclo: dict) -> Mesociclo:
+    def create_mesociclo(mesociclo: Mesociclo) -> Mesociclo:
         '''
-        Crea un un objeto Mesociclo en base al dict deserealizado 
+        Create a new Mesociclo object from the deserealized data recieved in the request
 
                 Parameters:
-                        mesociclo (dict): Estructura deserealizada enviada por el cliente
-                        con informacion del mesociclo generado.
+                        mesociclo (Mesociclo): Object that was deserealized by marshmallow-sqlalchemy. The Sesions doesn't get referenced
+                        by the package (the IDs are not provided, this could be updated), so we need to create them with the data that was
+                        provided.
 
                 Returns:
-                        Mesociclo: objeto creado si los datos ingresados son validos.  
+                        Mesociclo: new object created.  
         '''
 
-        usuario = UsuarioService.get_usuario_by_username(
-            mesociclo["usuario"])
-        if (usuario is None):
-            raise ValidationError("Usuario Inválido")
-
-        nivel = Nivel.query.filter_by(descripcion=mesociclo["nivel"]).first()
-        if (nivel is None):
-            raise ValidationError("Nivel Inválido")
-
-        objetivo = Objetivo.query.filter_by(
-            descripcion=mesociclo["objetivo"]).first()
-        if (objetivo is None):
-            raise ValidationError("Objetivo Inválido")
-
-        organizacion = Organizacion.query.filter_by(
-            descripcion=mesociclo["organizacion"]).first()
-        if (organizacion is None):
-            raise ValidationError("Organización Inválida")
-
-        principal_tren_superior = EjercicioService.get_por_nombre(
-            mesociclo["principal_tren_superior"])
-        if (organizacion is None):
-            raise ValidationError("Ejercicio Inválido - Tren Superior")
-
-        principal_tren_inferior = EjercicioService.get_por_nombre(
-            mesociclo["principal_tren_inferior"])
-        if (organizacion is None):
-            raise ValidationError("Ejercicio Inválido - Tren Inferior")
-
         sesiones = [SesionService.create_sesion(
-            sesion) for sesion in mesociclo["sesiones"]]
+            sesion) for sesion in mesociclo.sesiones]
         if (len(sesiones) == 0):
             raise ValidationError("Ingresar al menos 1 Sesión")
 
-        newMesociclo = Mesociclo(
-            usuario=usuario,
-            nivel=nivel,
-            objetivo=objetivo,
-            organizacion=organizacion,
-            principal_tren_superior=principal_tren_superior,
-            principal_tren_inferior=principal_tren_inferior,
-            semanas_por_mesociclo=mesociclo["semanas_por_mesociclo"],
-            sesiones_por_semana=mesociclo["sesiones_por_semana"],
-            sesiones=sesiones
-        )
+        mesociclo.sesiones = sesiones
 
-        return newMesociclo
+        return mesociclo

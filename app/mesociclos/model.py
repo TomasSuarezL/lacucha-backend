@@ -10,7 +10,7 @@ from app import db
 class EstadoMesociclo(db.Model):
     __tablename__ = 'estados_mesociclo'
 
-    id_estados_mesociclo = db.Column(db.Integer, db.Sequence(
+    id_estado_mesociclo = db.Column(db.Integer, db.Sequence(
         'estados_mesociclo_id_estados_mesociclo_seq'), primary_key=True, unique=True)
     descripcion = db.Column(db.String(100), nullable=False, unique=True)
 
@@ -61,7 +61,7 @@ class Mesociclo(db.Model):
         'niveles.id_nivel'))
     nivel = db.relationship("Nivel", uselist=False)
     id_estado = db.Column(db.Integer, db.ForeignKey(
-        'estados_mesociclo.id_estados_mesociclo'), default=1)  # default value = 1 "activo"
+        'estados_mesociclo.id_estado_mesociclo'), default=1)  # default value = 1 "activo"
     estado = db.relationship("EstadoMesociclo", uselist=False)
     id_objetivo = db.Column(db.Integer, db.ForeignKey(
         'objetivos.id_objetivo'))
@@ -114,6 +114,8 @@ class Mesociclo(db.Model):
         self.semanas_por_mesociclo = semanas_por_mesociclo
         self.sesiones_por_semana = sesiones_por_semana
         self.sesiones = sesiones
+
+        self.estado = EstadoMesociclo.query.get(1)
 
     def __repr__(self):
         return '<Mesociclo {}>'.format(self.id_mesociclo)

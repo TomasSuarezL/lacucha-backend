@@ -1,5 +1,8 @@
+from app.sesiones.service import SesionService
 from datetime import timedelta, datetime
 import os
+
+from sqlalchemy.orm import session
 import config
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
@@ -136,6 +139,38 @@ def seed_initial_data():
     mesociclo = MesocicloService.create_mesociclo(mesociclo_data)
 
     db.session.add(mesociclo)
+
+    db.session.commit()
+
+
+@manager.command
+def seed_today_session():
+    sesion_data = {"empezado": str(datetime.utcnow()),
+                   "finalizado": str(datetime.utcnow() + timedelta(hours=1)),
+                   "bloques": [{"series": 10,
+                                "numBloque": 1,
+                                "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1},
+                                               {"ejercicio": {
+                                                   "nombre": "Bulgarian Squats"}, "repeticiones": 8, "carga": 10.0},
+                                               {"ejercicio": {"nombre": "Hollow Press"}, "repeticiones": 16, "carga": 0.0}]},
+                               {"series": 10,
+                                "numBloque": 2,
+                                "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1},
+                                               {"ejercicio": {
+                                                   "nombre": "Bulgarian Squats"}, "repeticiones": 8, "carga": 10.0},
+                                               {"ejercicio": {"nombre": "Hollow Press"}, "repeticiones": 16, "carga": 0.0}]},
+                               {"series": 10,
+                                "numBloque": 3,
+                                "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1},
+                                               {"ejercicio": {
+                                                   "nombre": "Bulgarian Squats"}, "repeticiones": 8, "carga": 10.0},
+                                               {"ejercicio": {"nombre": "Hollow Press"}, "repeticiones": 16, "carga": 0.0}]},
+
+                               ]
+                   }
+    sesion = SesionService.create_sesion(sesion_data)
+
+    db.session.add(sesion)
 
     db.session.commit()
 

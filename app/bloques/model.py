@@ -14,7 +14,7 @@ class Bloque(db.Model):
     num_bloque = db.Column(db.Integer)
     series = db.Column(db.Integer)
     creado_en = db.Column(db.DateTime, default=datetime.utcnow)
-    actualizdo_en = db.Column(db.DateTime, default=None)
+    actualizado_en = db.Column(db.DateTime, default=None)
 
     def __init__(self, ejercicios, num_bloque, series):
         self.ejercicios = ejercicios

@@ -1,18 +1,39 @@
-import re
-from marshmallow import Schema, fields
+from marshmallow.fields import Pluck
+from app.usuarios.model import Genero, Nivel, Usuario
+from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 
 
-class UsuarioSchema(Schema):
-    id_usuario = fields.Int(dump_only=True)
-    username = fields.Str(required=True)
-    email = fields.Str(required=True)
-    nombre = fields.Str(required=True)
-    apelliduo = fields.Str(required=True)
-    fecha_nacimiento = fields.Str(required=True)
-    genero = fields.Str(required=True)
-    altura = fields.Float(required=True)
-    peso = fields.Float(required=True)
-    nivel = fields.Str(required=True)
-    img_url = fields.Str()
-    creado_en = fields.DateTime(dump_only=True)
-    actualizado_en = fields.DateTime(dump_only=True)
+class GeneroSchema(SQLAlchemySchema):
+    class Meta:
+        model = Genero
+        load_instance = True
+
+    descripcion = auto_field()
+
+
+class NivelSchema(SQLAlchemySchema):
+    class Meta:
+        model = Nivel
+        load_instance = True
+
+    descripcion = auto_field()
+
+
+class UsuarioSchema(SQLAlchemySchema):
+    class Meta:
+        model = Usuario
+        load_instance = True  # Optional: deserialize to model instances
+
+    id_usuario = auto_field()
+    username = auto_field()
+    email = auto_field()
+    nombre = auto_field()
+    apellido = auto_field()
+    fecha_nacimiento = auto_field()
+    genero = Pluck(GeneroSchema, 'descripcion')
+    altura = auto_field()
+    peso = auto_field()
+    nivel = Pluck(NivelSchema, 'descripcion')
+    img_url = auto_field()
+    creado_en = auto_field(dump_only=True)
+    actualizado_en = auto_field(dump_only=True)
