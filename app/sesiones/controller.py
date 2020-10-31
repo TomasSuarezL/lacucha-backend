@@ -18,21 +18,20 @@ class SesionResource(Resource):
         sesions = Sesion.query.order_by(Sesion.creado_en.desc()).all()
         return jsonify([ses.to_json() for ses in sesions])
 
-    @accepts(schema=SesionSchema, api=api)
+    @accepts(schema=SesionSchema(session=db.session), api=api)
     @responds(schema=SesionSchema)
     def post(self):
-        sesion_schema = SesionSchema(unknown=EXCLUDE)
-
         try:
-            body_sesion = request.get_json(force=True)
-            if not body_sesion:
+            sesion = request.parsed_obj
+            if not sesion:
                 return {"message": "No se recibió información del bloque"}, 400
 
-            sesion = sesion_schema.load(body_sesion)
             newSesion = SesionService.create_sesion(sesion)
 
             db.session.add(newSesion)
             db.session.commit()
+
+            return newSesion
 
         except AttributeError as err:
             print(err)
@@ -43,6 +42,7 @@ class SesionResource(Resource):
 
 @api.route('/todaySession')
 class TodaySesionResource(Resource):
+    @responds(schema=SesionSchema)
     def get(self):
         sesion = SesionService.get_today_sesion()
-        return jsonify(sesion.to_json() if sesion != None else sesion)
+        return sesion

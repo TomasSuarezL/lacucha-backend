@@ -1,18 +1,30 @@
+from marshmallow.fields import List, Nested
 from marshmallow.utils import EXCLUDE
-from app.bloques.model import EjercicioXBloque
+from marshmallow_sqlalchemy.schema.sqlalchemy_schema import SQLAlchemySchema, auto_field
+from app import db
+from app.bloques.model import Bloque, EjercicioXBloque
 from app.ejercicios.schema import EjercicioSchema
-from marshmallow import Schema, fields, post_load
 
 
-class EjercicioXBloqueSchema(Schema):
-    id = fields.Int(dump_only=True)
-    ejercicio = fields.Nested(EjercicioSchema(unknown=EXCLUDE))
-    repeticiones = fields.Int(required=True)
-    carga = fields.Float(required=True)
+class EjercicioXBloqueSchema(SQLAlchemySchema):
+    class Meta:
+        model = EjercicioXBloque
+        load_instance = True
+
+    id_ejerciciosxbloque = auto_field(dump_only=True)
+    ejercicio = Nested(EjercicioSchema(session=db.session, unknown=EXCLUDE))
+    repeticiones = auto_field(required=True)
+    carga = auto_field(required=True)
 
 
-class BloqueSchema(Schema):
-    id = fields.Int(dump_only=True)
-    series = fields.Int(required=True)
-    numBloque = fields.Int(required=True)
-    ejercicios = fields.List(fields.Nested(EjercicioXBloqueSchema()))
+class BloqueSchema(SQLAlchemySchema):
+    class Meta:
+        model = Bloque
+        load_instance = True
+
+    id_bloque = auto_field(dump_only=True)
+    series = auto_field(required=True)
+    numBloque = auto_field("num_bloque", required=True)
+    ejercicios = List(Nested(EjercicioXBloqueSchema(session=db.session)))
+    creado_en = auto_field(dump_only=True)
+    actualizado_en = auto_field(dump_only=True)

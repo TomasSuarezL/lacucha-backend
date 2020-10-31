@@ -13,9 +13,11 @@ api = Api()
 
 
 def create_app(_config=None):
+    environ = os.environ.get("FLASK_ENV")
+    if _config is None:
+        _config = config.ProductionConfig if environ == 'production' else config.DevelopmentConfig
     app = Flask(__name__)
-    app.config.from_object(
-        _config if _config != None else config.TestingConfig)
+    app.config.from_object(_config)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     api.init_app(app)
     register_routes(api, app)
@@ -29,6 +31,3 @@ def create_app(_config=None):
         return "Ok"
 
     return app
-
-
-create_app()

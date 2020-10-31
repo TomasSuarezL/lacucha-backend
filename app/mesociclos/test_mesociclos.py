@@ -1,8 +1,12 @@
-from app.mesociclos.model import Mesociclo
+from app.usuarios.model import Nivel, Usuario
+from app.sesiones.model import Sesion
+from app.ejercicios.model import Ejercicio
+from app.bloques.model import Bloque, EjercicioXBloque
+from app.mesociclos.model import Mesociclo, Objetivo
 import pytest
 from marshmallow.exceptions import ValidationError
 from app.mesociclos.service import MesocicloService
-from app.conftest import create_usuario_db
+from app.conftest import create_mesociclo_db, create_usuario_db
 from datetime import datetime, timedelta
 
 
@@ -10,28 +14,27 @@ from datetime import datetime, timedelta
 def test_crear_mesociclo_valido(db):
     # Arrange
     create_usuario_db(db)
-    sesion_data = {"empezado": str(datetime.utcnow()),
-                   "finalizado": str(datetime.utcnow() + timedelta(hours=1)),
-                   "bloques": [{"series": 10,
-                                "numBloque": 1,
-                                "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1}]}
-                               ]
-                   }
 
-    mesociclo_data = {
-        "usuario": "usuarioprueba",
-        "nivel": "Intermedio",
-        "objetivo": "Hipertrofia",
-        "organizacion": "Full Body",
-        "principal_tren_superior": "Traditional Push-ups",
-        "principal_tren_inferior": "Bulgarian Squats",
-        "semanas_por_mesociclo": 4,
-        "sesiones_por_semana": 3,
-        "sesiones": [sesion_data]
-    }
+    ej_x_bloque = EjercicioXBloque(ejercicio=Ejercicio(
+        "Traditional Push-ups"), repeticiones=10, carga=20.1)
+
+    bloque = Bloque(ejercicios=[ej_x_bloque], num_bloque=1, series=4)
+
+    sesion = Sesion(fecha_empezado=str(datetime.utcnow()), fecha_finalizado=str(
+        datetime.utcnow() + timedelta(hours=1)), bloques=[bloque])
+
+    mesociclo = Mesociclo(usuario=Usuario.query.first(),
+                          nivel=Nivel.query.first(),
+                          objetivo=Objetivo.query.first(),
+                          organizacion=2,
+                          principal_tren_inferior=5,
+                          principal_tren_superior=2,
+                          semanas_por_mesociclo=4,
+                          sesiones_por_semana=3,
+                          sesiones=[sesion])
 
     # Act
-    mesociclo = MesocicloService.create_mesociclo(mesociclo_data)
+    mesociclo = MesocicloService.create_mesociclo(mesociclo)
 
     # Assert
     assert mesociclo.usuario.username == "usuarioprueba"
@@ -71,11 +74,11 @@ def test_crear_mesociclo_invalido(db):
 
 
 # Controller
-def test_controller_crear_mesociclo_valido(db, client):
+def test_controller_create_valid_mesociclo(db, client):
     # Arrange
     create_usuario_db(db)
-    sesion_data = {"empezado": str(datetime.utcnow()),
-                   "finalizado": str(datetime.utcnow() + timedelta(hours=1)),
+    sesion_data = {"fechaEmpezado": str(datetime.utcnow()),
+                   "fechaFinalizado": str(datetime.utcnow() + timedelta(hours=1)),
                    "bloques": [{"series": 10,
                                 "numBloque": 1,
                                 "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1}]}
@@ -83,12 +86,12 @@ def test_controller_crear_mesociclo_valido(db, client):
                    }
 
     mesociclo_data = {
-        "usuario": "usuarioprueba",
-        "nivel": "Intermedio",
-        "objetivo": "Hipertrofia",
-        "organizacion": "Full Body",
-        "principal_tren_superior": "Traditional Push-ups",
-        "principal_tren_inferior": "Bulgarian Squats",
+        "usuario": "1",
+        "nivel": "2",
+        "objetivo": "3",
+        "organizacion": "3",
+        "principal_tren_superior": "2",
+        "principal_tren_inferior": "5",
         "semanas_por_mesociclo": 4,
         "sesiones_por_semana": 3,
         "sesiones": [sesion_data]
@@ -102,8 +105,93 @@ def test_controller_crear_mesociclo_valido(db, client):
     mesociclo = Mesociclo.query.first()
 
     assert mesociclo.usuario.username == "usuarioprueba"
-    assert mesociclo.objetivo.descripcion == "Hipertrofia"
-    assert mesociclo.organizacion.descripcion == "Full Body"
-    assert mesociclo.principal_tren_superior.nombre == "Traditional Push-ups"
+    assert mesociclo.objetivo.descripcion == "Fuerza"
+    assert mesociclo.organizacion.descripcion == "Combinado"
+    assert mesociclo.principal_tren_superior.nombre == "Diamond Push-ups"
+    assert mesociclo.principal_tren_inferior.nombre == "Bulgarian Squats"
     assert mesociclo.semanas_por_mesociclo == 4
     assert len(mesociclo.sesiones) == 1
+    assert len(mesociclo.sesiones[0].bloques) == 1
+    assert len(mesociclo.sesiones[0].bloques[0].ejercicios) == 1
+    assert mesociclo.sesiones[0].bloques[0].ejercicios[0].ejercicio.patron.nombre == "Tren Superior"
+    assert mesociclo.fecha_fin_real == None
+    assert mesociclo.sentimiento == None
+
+
+def test_controller_update_valid_mesociclo(db, client):
+    # Arrange
+    create_usuario_db(db)
+    create_mesociclo_db(db)
+
+    sesion_data = {"fechaEmpezado": str(datetime.utcnow()),
+                   "fechaFinalizado": str(datetime.utcnow() + timedelta(hours=1)),
+                   "bloques": [{"series": 10,
+                                "numBloque": 1,
+                                "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1}]}
+                               ]
+                   }
+
+    mesociclo_data = {
+        "id_mesociclo": "1",
+        "usuario": "1",
+        "nivel": "2",
+        "objetivo": "3",
+        "organizacion": "3",
+        "principal_tren_superior": "2",
+        "principal_tren_inferior": "5",
+        "semanas_por_mesociclo": 4,
+        "sesiones_por_semana": 3,
+        "sesiones": [sesion_data],
+        "fechaFinReal": str(datetime.utcnow()),
+        "aumentoMotivacion": "True",
+        "masCercaObjetivos": "False",
+        "sentimiento": 2,
+        "durmiendo": "3",
+        "alimentado": 4
+    }
+
+    # Act
+    response = client.put(
+        '/api/mesociclos', json=mesociclo_data,  follow_redirects=True).get_json()
+
+    # Assert
+    mesociclo = Mesociclo.query.first()
+
+    assert mesociclo.id_mesociclo == 1
+    assert mesociclo.usuario.username == "usuarioprueba"
+    assert mesociclo.objetivo.descripcion == "Fuerza"
+    assert mesociclo.organizacion.descripcion == "Combinado"
+    assert mesociclo.principal_tren_superior.nombre == "Diamond Push-ups"
+    assert mesociclo.principal_tren_inferior.nombre == "Bulgarian Squats"
+    assert mesociclo.semanas_por_mesociclo == 4
+    assert len(mesociclo.sesiones) == 1
+    assert len(mesociclo.sesiones[0].bloques) == 1
+    assert len(mesociclo.sesiones[0].bloques[0].ejercicios) == 1
+    assert mesociclo.sesiones[0].bloques[0].ejercicios[0].ejercicio.patron.nombre == "Tren Superior"
+    assert mesociclo.fecha_fin_real != None
+    assert mesociclo.sentimiento == 2
+    assert mesociclo.aumento_motivacion
+    assert not mesociclo.mas_cerca_objetivos
+    assert mesociclo.alimentado == 4
+    assert mesociclo.actualizado_en.date() == datetime.utcnow().date()
+
+
+def test_controller_get_valid_mesociclo(db, client):
+    # Arrange
+    create_usuario_db(db)
+    create_mesociclo_db(db)
+    mesociclo_id = 1
+
+    # Act
+    mesociclo = client.get(
+        f'/api/mesociclos/{mesociclo_id}',  follow_redirects=True).get_json()
+
+    # Assert
+    assert mesociclo["id_mesociclo"] == 1
+    assert mesociclo["usuario"]["username"] == "usuarioprueba"
+    assert mesociclo["estado"]["descripcion"] == "Activo"
+    assert mesociclo["objetivo"]["descripcion"] == "Acondicionamiento General"
+    assert mesociclo["organizacion"]["id_organizacion"] == 1
+    assert mesociclo["principal_tren_inferior"]["nombre"] == "Bulgarian Squats"
+    assert mesociclo["semanas_por_mesociclo"] == 4
+    assert len(mesociclo["sesiones"]) == 0

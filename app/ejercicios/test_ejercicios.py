@@ -61,6 +61,12 @@ def test_service_no_crea_ejercicio_con_patron_inexistente(db, nombre, patron):
 def test_controller_list_ejercicios(db, client):
     rv = client.get('/api/ejercicios?patron=Tren Superior',
                     follow_redirects=True).get_json()
-    print(rv)
 
-    assert len(rv) == 1
+    assert len(rv) == 4
+
+
+def test_controller_crear_ejercicio(db, client):
+    rv = client.post('/api/ejercicios', json={"nombre": "Ejercicio Test", "patron": "Zona Media"},
+                     follow_redirects=True).get_json()
+
+    assert rv['nombre'] == "Ejercicio Test"
