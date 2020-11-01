@@ -1,4 +1,4 @@
-from app.mesociclos.model import Mesociclo
+from app.mesociclos.model import EstadoMesociclo, Mesociclo
 from datetime import datetime
 from flask import jsonify, request, abort
 from flask_accepts.decorators.decorators import accepts, responds
@@ -49,10 +49,10 @@ class MesociclosResource(Resource):
             if not mesociclo:
                 return {"message": "No se recibió información del bloque"}, 400
 
-            updatedMesiciclo = MesocicloService.create_mesociclo(mesociclo)
-            updatedMesiciclo.actualizado_en = datetime.now()
+            updatedMesociclo = MesocicloService.create_mesociclo(mesociclo)
+            updatedMesociclo.actualizado_en = datetime.now()
 
-            db.session.add(updatedMesiciclo)
+            db.session.add(updatedMesociclo)
             db.session.commit()
 
             return mesociclo
