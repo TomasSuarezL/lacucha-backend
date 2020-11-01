@@ -109,6 +109,7 @@ def test_controller_create_valid_mesociclo(db, client):
     assert mesociclo.organizacion.descripcion == "Combinado"
     assert mesociclo.principal_tren_superior.nombre == "Diamond Push-ups"
     assert mesociclo.principal_tren_inferior.nombre == "Bulgarian Squats"
+    assert mesociclo.estado.descripcion == "Activo"
     assert mesociclo.semanas_por_mesociclo == 4
     assert len(mesociclo.sesiones) == 1
     assert len(mesociclo.sesiones[0].bloques) == 1
@@ -134,6 +135,7 @@ def test_controller_update_valid_mesociclo(db, client):
     mesociclo_data = {
         "id_mesociclo": "1",
         "usuario": "1",
+        "estado": "2",
         "nivel": "2",
         "objetivo": "3",
         "organizacion": "3",
@@ -159,6 +161,7 @@ def test_controller_update_valid_mesociclo(db, client):
 
     assert mesociclo.id_mesociclo == 1
     assert mesociclo.usuario.username == "usuarioprueba"
+    assert mesociclo.estado.descripcion == "Terminado"
     assert mesociclo.objetivo.descripcion == "Fuerza"
     assert mesociclo.organizacion.descripcion == "Combinado"
     assert mesociclo.principal_tren_superior.nombre == "Diamond Push-ups"
