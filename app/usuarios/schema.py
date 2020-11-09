@@ -8,6 +8,7 @@ class GeneroSchema(SQLAlchemySchema):
         model = Genero
         load_instance = True
 
+    idGenero = auto_field("id_genero")
     descripcion = auto_field()
 
 
@@ -16,6 +17,7 @@ class NivelSchema(SQLAlchemySchema):
         model = Nivel
         load_instance = True
 
+    idNivel = auto_field("id_nivel")
     descripcion = auto_field()
 
 
@@ -24,16 +26,16 @@ class UsuarioSchema(SQLAlchemySchema):
         model = Usuario
         load_instance = True  # Optional: deserialize to model instances
 
-    id_usuario = auto_field()
+    idUsuario = auto_field("id_usuario")
     username = auto_field()
     email = auto_field()
     nombre = auto_field()
     apellido = auto_field()
-    fecha_nacimiento = auto_field()
+    fechaNacimiento = auto_field("fecha_nacimiento")
     genero = Pluck(GeneroSchema, 'descripcion')
     altura = auto_field()
     peso = auto_field()
     nivel = Pluck(NivelSchema, 'descripcion')
-    img_url = auto_field()
-    creado_en = auto_field(dump_only=True)
-    actualizado_en = auto_field(dump_only=True)
+    imgUrl = auto_field("img_url")
+    creadoEn = auto_field("creado_en", dump_only=True)
+    actualizadoEn = auto_field("actualizado_en", dump_only=True)

@@ -6,7 +6,7 @@ from flask_restx import Namespace, Resource
 from marshmallow.exceptions import ValidationError
 from app import db
 from app.mesociclos.service import MesocicloService
-from .schema import MesocicloFlatSchema, MesocicloSchema
+from .schema import MesocicloUpdateSchema, MesocicloSchema
 
 api = Namespace("Mesociclos", description="Mesociclo model")
 
@@ -25,7 +25,7 @@ class MesociclosResource(Resource):
             mesociclo = request.parsed_obj
 
             if not mesociclo:
-                return {"message": "No se recibió información del bloque"}, 400
+                return {"message": "No se recibió información del mesociclo"}, 400
 
             newMesociclo = MesocicloService.create_mesociclo(mesociclo)
 
@@ -40,33 +40,10 @@ class MesociclosResource(Resource):
         except ValidationError as verr:
             return verr, 400
 
-    @accepts(schema=MesocicloSchema(session=db.session), api=api)
-    @responds(schema=MesocicloSchema)
-    def put(self):
-        try:
-            mesociclo = request.parsed_obj
-
-            if not mesociclo:
-                return {"message": "No se recibió información del bloque"}, 400
-
-            updatedMesociclo = MesocicloService.create_mesociclo(mesociclo)
-            updatedMesociclo.actualizado_en = datetime.now()
-
-            db.session.add(updatedMesociclo)
-            db.session.commit()
-
-            return mesociclo
-
-        except AttributeError as err:
-            print(err)
-            return err, 400
-        except ValidationError as verr:
-            return verr, 400
-
 
 @api.route('/<int:id>')
 class MesocicloResource(Resource):
-    @responds(schema=MesocicloFlatSchema)
+    @responds(schema=MesocicloSchema)
     def get(self, id):
         try:
             mesociclo = db.session.query(Mesociclo).get(id)
@@ -74,3 +51,24 @@ class MesocicloResource(Resource):
         except AttributeError as err:
             print(err)
             return err, 400
+
+    @accepts(schema=MesocicloUpdateSchema(session=db.session), api=api)
+    @responds(schema=MesocicloSchema)
+    def put(self, id):
+        try:
+            sentMesociclo = request.parsed_obj
+            if not sentMesociclo:
+                return {"message": "No se recibió información del mesociclo"}, 400
+
+            sentMesociclo.actualizado_en = datetime.utcnow()
+
+            db.session.add(sentMesociclo)
+            db.session.commit()
+
+            return sentMesociclo
+
+        except AttributeError as err:
+            print(err)
+            return err, 400
+        except ValidationError as verr:
+            return verr, 400

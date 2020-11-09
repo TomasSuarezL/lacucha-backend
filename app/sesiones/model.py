@@ -18,10 +18,9 @@ class Sesion(db.Model):
     creado_en = db.Column(db.DateTime, default=datetime.utcnow)
     actualizado_en = db.Column(db.DateTime, default=None)
 
-    def __init__(self, bloques: List[EjercicioXBloque], fecha_empezado: datetime, fecha_finalizado: datetime):
+    def __init__(self, bloques: List[EjercicioXBloque], fecha_empezado: datetime):
         self.bloques = bloques
         self.fecha_empezado = fecha_empezado
-        self.fecha_finalizado = fecha_finalizado
 
     def __repr__(self):
         return '<Sesion {}>'.format(self.id_sesion)

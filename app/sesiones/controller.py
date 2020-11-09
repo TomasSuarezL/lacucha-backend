@@ -1,3 +1,4 @@
+from datetime import datetime
 from app import db
 from flask import jsonify, request, abort
 from flask_accepts.decorators.decorators import accepts, responds
@@ -5,14 +6,14 @@ from flask_restx import Namespace, Resource
 from marshmallow.utils import EXCLUDE
 
 from .service import SesionService
-from .schema import SesionSchema
+from .schema import SesionSchema, SesionUpdateSchema
 # from datetime import date
 
 api = Namespace("Sesiones", description="Sesiones model")
 
 
 @api.route('/')
-class SesionResource(Resource):
+class SesionsResource(Resource):
     def get(self):
         from .model import Sesion
         sesions = Sesion.query.order_by(Sesion.creado_en.desc()).all()
@@ -40,7 +41,25 @@ class SesionResource(Resource):
             abort(400)
 
 
-@api.route('/todaySession')
+@api.route('/<int:id_sesion>')
+class SesionResource(Resource):
+    @accepts(schema=SesionUpdateSchema(session=db.session), api=api)
+    @responds(schema=SesionSchema)
+    def put(self, id_sesion):
+        try:
+            sesion = request.parsed_obj
+            sesion.actualizado_en = datetime.utcnow()
+
+            db.session.add(sesion)
+            db.session.commit()
+
+            return sesion
+
+        except AttributeError as err:
+            abort(400, err)
+
+
+@api.route('/todaySesion')
 class TodaySesionResource(Resource):
     @responds(schema=SesionSchema)
     def get(self):
