@@ -106,13 +106,19 @@ def create_sesion_db(db):
         ejercicio=ejInferior, repeticiones=10, carga=50)
     exbMedia = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
 
+    exbSuperior2 = EjercicioXBloque(
+        ejercicio=ejSuperior, repeticiones=10, carga=30)
+    exbInferior2 = EjercicioXBloque(
+        ejercicio=ejInferior, repeticiones=10, carga=50)
+    exbMedia2 = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
+
     nuevoBloque1 = Bloque(
         ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4)
     nuevoBloque2 = Bloque(
-        ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=2, series=4)
+        ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4)
 
-    nuevaSesion = Sesion(bloques=[nuevoBloque1, nuevoBloque2], fecha_empezado=datetime.utcnow(
-    ), fecha_finalizado=datetime.utcnow())
+    nuevaSesion = Sesion(
+        bloques=[nuevoBloque1, nuevoBloque2], fecha_empezado=datetime.utcnow())
 
     db.session.add(nuevaSesion)
     db.session.commit()
@@ -140,6 +146,30 @@ def create_usuario_db(db):
 
 
 def create_mesociclo_db(db):
+    ejSuperior = db.session.query(Ejercicio).first()
+    ejInferior = db.session.query(Ejercicio).first()
+    ejMedia = db.session.query(Ejercicio).first()
+
+    exbSuperior = EjercicioXBloque(
+        ejercicio=ejSuperior, repeticiones=10, carga=30)
+    exbInferior = EjercicioXBloque(
+        ejercicio=ejInferior, repeticiones=10, carga=50)
+    exbMedia = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
+
+    exbSuperior2 = EjercicioXBloque(
+        ejercicio=ejSuperior, repeticiones=10, carga=30)
+    exbInferior2 = EjercicioXBloque(
+        ejercicio=ejInferior, repeticiones=10, carga=50)
+    exbMedia2 = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
+
+    nuevoBloque1 = Bloque(
+        ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4)
+    nuevoBloque2 = Bloque(
+        ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4)
+
+    nuevaSesion = Sesion(
+        bloques=[nuevoBloque1, nuevoBloque2], fecha_empezado=datetime.utcnow())
+
     usuario = db.session.query(Usuario).first()
     objetivo = db.session.query(Objetivo).first()
     organizacion = db.session.query(Organizacion).first()
@@ -157,7 +187,7 @@ def create_mesociclo_db(db):
         principal_tren_superior=ej_superior,
         semanas_por_mesociclo=4,
         sesiones_por_semana=3,
-        sesiones=[]
+        sesiones=[nuevaSesion]
     )
 
     db.session.add(mesociclo)
