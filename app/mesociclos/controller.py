@@ -1,4 +1,4 @@
-from app.mesociclos.model import EstadoMesociclo, Mesociclo
+from app.mesociclos.model import Mesociclo
 from datetime import datetime
 from flask import jsonify, request, abort
 from flask_accepts.decorators.decorators import accepts, responds

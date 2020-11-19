@@ -100,7 +100,7 @@ def seed_initial_data():
     nivel = db.session.query(Nivel).first()
 
     user = Usuario(
-        username="@tsuarezlissi",
+        username="tsuarezlissi",
         email="tomas.sl@hotmail.com",
         nombre="Tomas",
         apellido="Suarez Lissi",
