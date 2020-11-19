@@ -3,7 +3,6 @@ from app import db
 from flask import jsonify, request, abort
 from flask_accepts.decorators.decorators import accepts, responds
 from flask_restx import Namespace, Resource
-from marshmallow.utils import EXCLUDE
 
 from .service import SesionService
 from .schema import SesionSchema, SesionUpdateSchema

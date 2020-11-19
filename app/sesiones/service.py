@@ -15,7 +15,7 @@ class SesionService:
 
     @staticmethod
     def get_today_sesion() -> Sesion:
-        return Sesion.query.filter(Sesion.creado_en >= date.today()).order_by(Sesion.creado_en.desc()).first()
+        return Sesion.query.filter(Sesion.fecha_empezado >= date.today()).order_by(Sesion.fecha_empezado.asc()).first()
 
     @staticmethod
     def create_sesion(sesion: Sesion) -> Sesion:

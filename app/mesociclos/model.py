@@ -80,7 +80,7 @@ class Mesociclo(db.Model):
     semanas_por_mesociclo = db.Column(db.Integer, nullable=False)
     sesiones_por_semana = db.Column(db.Integer, nullable=False)
     sesiones = db.relationship(
-        "Sesion", lazy='subquery', backref=db.backref('mesociclos', lazy=True))
+        "Sesion", lazy='subquery', backref=db.backref('mesociclo', lazy=True))
     # Fin de mesociclo
     fecha_fin_real = db.Column(db.DateTime, default=None)
     aumento_motivacion = db.Column(db.Boolean, default=None)
