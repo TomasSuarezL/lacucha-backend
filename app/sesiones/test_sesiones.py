@@ -73,6 +73,7 @@ def test_controller_update_sesion(db, client):
     sesion_body = {
         "idSesion": 1,
         "fechaFinalizado": str(datetime.utcnow() + timedelta(hours=1)),
+        "fechaEmpezado": str(datetime(2020, 11, 1)),
         "bloques": [
             {"idBloque": 1,
              "numBloque": 1,
@@ -98,6 +99,7 @@ def test_controller_update_sesion(db, client):
 
     # Assert
     assert sesion.fecha_finalizado != None
+    assert sesion.fecha_empezado.date() == datetime(2020, 11, 1).date()
     assert len(sesion.bloques) == 2
     assert len(sesion.bloques[0].ejercicios) == 3
     bloques = sorted(sesion.bloques, key=lambda k: k.id_bloque)

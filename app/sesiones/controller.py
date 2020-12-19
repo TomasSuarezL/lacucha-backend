@@ -56,11 +56,3 @@ class SesionResource(Resource):
 
         except AttributeError as err:
             abort(400, err)
-
-
-@api.route('/todaySesion')
-class TodaySesionResource(Resource):
-    @responds(schema=SesionSchema)
-    def get(self):
-        sesion = SesionService.get_today_sesion()
-        return sesion

@@ -23,3 +23,11 @@ class NextSesionResource(Resource):
     def get(self, id_usuario):
         sesion = UsuarioService.get_proxima_sesion(id_usuario)
         return sesion
+
+
+@api.route('/<int:id_usuario>/mesociclos/sesionHoy')
+class TodaySesionResource(Resource):
+    @responds(schema=SesionSchema)
+    def get(self, id_usuario):
+        sesion = UsuarioService.get_today_sesion(id_usuario)
+        return sesion

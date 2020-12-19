@@ -1,3 +1,4 @@
+from app.sesiones.schema import SesionSchema
 from app.sesiones.service import SesionService
 from datetime import timedelta, datetime
 import os
@@ -145,8 +146,7 @@ def seed_initial_data():
 
 @manager.command
 def seed_today_session():
-    sesion_data = {"empezado": str(datetime.utcnow()),
-                   "finalizado": str(datetime.utcnow() + timedelta(hours=1)),
+    sesion_data = {"fechaEmpezado": str(datetime.utcnow()),
                    "bloques": [{"series": 10,
                                 "numBloque": 1,
                                 "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1},
@@ -168,7 +168,10 @@ def seed_today_session():
 
                                ]
                    }
-    sesion = SesionService.create_sesion(sesion_data)
+
+    sesion_schema = SesionSchema(session=db.session)
+
+    sesion = SesionService.create_sesion(sesion_schema.load(sesion_data))
 
     db.session.add(sesion)
 

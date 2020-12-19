@@ -14,10 +14,6 @@ class SesionService:
         return Sesion.query.all()
 
     @staticmethod
-    def get_today_sesion() -> Sesion:
-        return Sesion.query.filter(Sesion.fecha_empezado >= date.today()).order_by(Sesion.fecha_empezado.asc()).first()
-
-    @staticmethod
     def create_sesion(sesion: Sesion) -> Sesion:
         '''
         Create an Sesion object from the Sesion resulting of the deserealization done by marshmallow-sqlalchemy that has
