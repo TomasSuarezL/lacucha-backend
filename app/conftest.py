@@ -1,6 +1,6 @@
 from app.mesociclos.model import EstadoMesociclo, Mesociclo, Objetivo, Organizacion
 from app.usuarios.model import Genero, Nivel, Usuario
-from datetime import datetime
+from datetime import datetime, timedelta
 from app.ejercicios.model import Ejercicio, PatronMovimiento
 from app.bloques.model import Bloque, EjercicioXBloque
 from app.sesiones.model import Sesion
@@ -167,8 +167,15 @@ def create_mesociclo_db(db):
     nuevoBloque2 = Bloque(
         ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4)
 
-    nuevaSesion = Sesion(
+    nuevoBloque3 = Bloque(
+        ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4)
+    nuevoBloque4 = Bloque(
+        ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4)
+
+    nuevaSesion1 = Sesion(
         bloques=[nuevoBloque1, nuevoBloque2], fecha_empezado=datetime.utcnow())
+    nuevaSesion2 = Sesion(
+        bloques=[nuevoBloque3, nuevoBloque4], fecha_empezado=datetime.utcnow() + timedelta(days=1))
 
     usuario = db.session.query(Usuario).first()
     objetivo = db.session.query(Objetivo).first()
@@ -187,7 +194,7 @@ def create_mesociclo_db(db):
         principal_tren_superior=ej_superior,
         semanas_por_mesociclo=4,
         sesiones_por_semana=3,
-        sesiones=[nuevaSesion]
+        sesiones=[nuevaSesion1, nuevaSesion2]
     )
 
     db.session.add(mesociclo)
