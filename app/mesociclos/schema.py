@@ -1,3 +1,4 @@
+from marshmallow.utils import EXCLUDE
 from app.usuarios.schema import NivelSchema, UsuarioSchema
 from app.ejercicios.schema import EjercicioSchema
 from marshmallow.fields import List, Nested
@@ -38,8 +39,9 @@ class MesocicloSchema(SQLAlchemySchema):
     class Meta:
         model = Mesociclo
         load_instance = True
+        unknown = EXCLUDE
 
-    idMesociclo = auto_field("id_mesociclo")
+    idMesociclo = auto_field("id_mesociclo", dump_only=True)
     usuario = Nested(UsuarioSchema(session=db.session), required=True)
     estado = Nested(EstadoMesocicloSchema(session=db.session), dump_only=True)
     nivel = Nested(NivelSchema(session=db.session), required=True)
@@ -47,9 +49,9 @@ class MesocicloSchema(SQLAlchemySchema):
     organizacion = Nested(OrganizacionSchema(
         session=db.session), required=True)
     principalTrenSuperior = Nested(
-        EjercicioSchema(session=db.session), attribute='principal_tren_superior', required=True)
+        EjercicioSchema(session=db.session), attribute='principal_tren_superior', required=False)
     principalTrenInferior = Nested(
-        EjercicioSchema(session=db.session), attribute='principal_tren_inferior', required=True)
+        EjercicioSchema(session=db.session), attribute='principal_tren_inferior')
     semanasPorMesociclo = auto_field("semanas_por_mesociclo", required=True)
     sesionesPorSemana = auto_field("sesiones_por_semana", required=True)
     sesiones = List(Nested(SesionSchema(session=db.session), required=True))

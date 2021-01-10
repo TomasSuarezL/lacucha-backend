@@ -1,5 +1,6 @@
 from ast import dump
 from marshmallow.fields import List, Nested
+from marshmallow.utils import EXCLUDE
 from marshmallow_sqlalchemy.schema.sqlalchemy_schema import SQLAlchemySchema, auto_field
 from app import db
 from app.bloques.schema import BloqueSchema, BloqueUpdateSchema
@@ -10,6 +11,7 @@ class SesionSchema(SQLAlchemySchema):
     class Meta:
         model = Sesion
         load_instance = True
+        unknown = EXCLUDE
 
     idSesion = auto_field("id_sesion", dump_only=True)
     bloques = List(Nested(BloqueSchema(session=db.session)))

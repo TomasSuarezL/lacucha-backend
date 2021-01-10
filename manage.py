@@ -36,26 +36,28 @@ def drop():
 def seed_reference_data():
     "Add seed data to the database."
     # Patrones
-    trenSuperior = PatronMovimiento(nombre="Tren Superior")
-    trenInferior = PatronMovimiento(nombre="Tren Inferior")
-    zonaMedia = PatronMovimiento(nombre="Zona Media")
+    traccion = PatronMovimiento(nombre="Tracción")
+    empuje = PatronMovimiento(nombre="Empuje")
+    rodilla = PatronMovimiento(nombre="Rodilla")
+    cadera = PatronMovimiento(nombre="Cadera")
+    core = PatronMovimiento(nombre="Core")
 
-    db.session.add_all([trenSuperior, trenInferior, zonaMedia])
+    db.session.add_all([traccion, rodilla, core, empuje, cadera])
 
     # Ejercicios
     traditionalPullUps = Ejercicio(
-        nombre="Traditional Push-ups", patron=trenSuperior)
+        nombre="Traditional Push-ups", patron=traccion)
     diamondPushUps = Ejercicio(
-        nombre="Diamond Push-ups", patron=trenSuperior)
-    pullUps = Ejercicio(nombre="Pull-ups", patron=trenSuperior)
-    chinUps = Ejercicio(nombre="Chin-ups", patron=trenSuperior)
+        nombre="Diamond Push-ups", patron=traccion)
+    pullUps = Ejercicio(nombre="Pull-ups", patron=traccion)
+    chinUps = Ejercicio(nombre="Chin-ups", patron=traccion)
     bulgarianSquats = Ejercicio(
-        nombre="Bulgarian Squats", patron=trenInferior)
-    skateSquats = Ejercicio(nombre="Skate Squats", patron=trenInferior)
-    cossakSquats = Ejercicio(nombre="Cossak Squats", patron=trenInferior)
-    hollowPress = Ejercicio(nombre="Hollow Press", patron=zonaMedia)
-    botesMov = Ejercicio(nombre="Botes Movimiento", patron=zonaMedia)
-    lAbs = Ejercicio(nombre="L-Abs", patron=zonaMedia)
+        nombre="Bulgarian Squats", patron=rodilla)
+    skateSquats = Ejercicio(nombre="Skate Squats", patron=rodilla)
+    cossakSquats = Ejercicio(nombre="Cossak Squats", patron=rodilla)
+    hollowPress = Ejercicio(nombre="Hollow Press", patron=core)
+    botesMov = Ejercicio(nombre="Botes Movimiento", patron=core)
+    lAbs = Ejercicio(nombre="L-Abs", patron=core)
 
     db.session.add_all([traditionalPullUps, diamondPushUps, pullUps, chinUps,
                         bulgarianSquats, skateSquats, cossakSquats, hollowPress, botesMov, lAbs])
