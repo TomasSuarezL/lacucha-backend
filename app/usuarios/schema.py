@@ -1,6 +1,7 @@
-from marshmallow.fields import Pluck
+from marshmallow.fields import Nested, Pluck
 from app.usuarios.model import Genero, Nivel, Usuario
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
+from app import db
 
 
 class GeneroSchema(SQLAlchemySchema):
@@ -35,7 +36,7 @@ class UsuarioSchema(SQLAlchemySchema):
     genero = Pluck(GeneroSchema, 'descripcion')
     altura = auto_field()
     peso = auto_field()
-    nivel = Pluck(NivelSchema, 'descripcion')
+    nivel = Nested(NivelSchema(session=db.session))
     imgUrl = auto_field("img_url")
     creadoEn = auto_field("creado_en", dump_only=True)
     actualizadoEn = auto_field("actualizado_en", dump_only=True)

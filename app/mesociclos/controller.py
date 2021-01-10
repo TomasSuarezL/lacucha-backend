@@ -1,3 +1,4 @@
+from flask.globals import session
 from app.mesociclos.model import Mesociclo
 from datetime import datetime
 from flask import jsonify, request, abort
@@ -18,14 +19,17 @@ class MesociclosResource(Resource):
         mesociclos = Mesociclo.query.order_by(Mesociclo.creado_en.desc()).all()
         return jsonify([mes.to_json() for mes in mesociclos])
 
-    @accepts(schema=MesocicloSchema(session=db.session), api=api)
-    @responds(schema=MesocicloSchema)
+    # @accepts(schema=MesocicloSchema(session=db.session), api=api)
+    @responds(schema=MesocicloSchema(session=db.session))
     def post(self):
         try:
-            mesociclo = request.parsed_obj
+            mesociclo = request.get_json()
 
             if not mesociclo:
                 return {"message": "No se recibió información del mesociclo"}, 400
+
+            mesosciclo_schema = MesocicloSchema(session=db.session)
+            mesociclo = mesosciclo_schema.load(mesociclo)
 
             newMesociclo = MesocicloService.create_mesociclo(mesociclo)
 

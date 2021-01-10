@@ -10,8 +10,9 @@ class EjercicioXBloqueSchema(SQLAlchemySchema):
     class Meta:
         model = EjercicioXBloque
         load_instance = True
+        unknown = EXCLUDE
 
-    idEjerciciosxbloque = auto_field("id_ejerciciosxbloque")
+    idEjerciciosxbloque = auto_field("id_ejerciciosxbloque", dump_only=True)
     ejercicio = Nested(EjercicioSchema(session=db.session, unknown=EXCLUDE))
     repeticiones = auto_field(required=True)
     carga = auto_field(required=True)
@@ -32,6 +33,7 @@ class BloqueSchema(SQLAlchemySchema):
     class Meta:
         model = Bloque
         load_instance = True
+        unknown = EXCLUDE
 
     idBloque = auto_field("id_bloque", dump_only=True)
     series = auto_field(required=True)

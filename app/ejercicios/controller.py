@@ -11,11 +11,13 @@ api = Namespace("Ejercicios", description="Ejercicios model")
 
 @api.route('/')
 class EjercicioResource(Resource):
-    @accepts(dict(name='patron', type=str), api=api)
+    @accepts(dict(name='patrones', type=str), api=api)
     @responds(schema=EjercicioSchema(many=True))
     def get(self):
-        _patron = request.parsed_args['patron']
-        ejercicios = EjercicioService.get_por_nombre_patron(_patron)
+        _patrones = request.parsed_args['patrones']
+        if (_patrones != None):
+            _patrones = _patrones.split(',')
+        ejercicios = EjercicioService.get_por_nombre_patrones(_patrones)
         return ejercicios
 
     @accepts(schema=EjercicioPostSchema(session=db.session), api=api)
@@ -30,3 +32,8 @@ class EjercicioResource(Resource):
         db.session.commit()
 
         return ejercicio
+
+
+string_list = "Traccion,Empuje"
+
+string_list.split(',')

@@ -77,14 +77,18 @@ def test_crear_mesociclo_invalido(db):
 def test_controller_create_valid_mesociclo(db, client):
     # Arrange
     create_usuario_db(db)
-    sesion_data = {"fechaEmpezado": str(datetime.utcnow()),
-                   "bloques": [{"series": 10,
+    sesion_data = {"idSesion": None,
+                   "fechaFinalizado": None,
+                   "fechaEmpezado": str(datetime.utcnow()),
+                   "bloques": [{"idBloque": None,
+                                "series": 10,
                                 "numBloque": 1,
                                 "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1}]}
                                ]
                    }
 
     mesociclo_data = {
+        "idMesociclo": None,
         "usuario": {"idUsuario": 1},
         "nivel": {"idNivel": 2},
         "objetivo": {"idObjetivo": 3},
@@ -95,7 +99,6 @@ def test_controller_create_valid_mesociclo(db, client):
         "sesionesPorSemana": 3,
         "sesiones": [sesion_data]
     }
-
     # Act
     response = client.post(
         '/api/mesociclos', json=mesociclo_data,  follow_redirects=True).get_json()
