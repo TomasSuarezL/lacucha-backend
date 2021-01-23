@@ -1,5 +1,6 @@
+import uuid
 from typing import List
-from app.bloques.model import EjercicioXBloque
+from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 from app import db
 
@@ -31,6 +32,7 @@ class Usuario(db.Model):
 
     id_usuario = db.Column(db.Integer, db.Sequence(
         'usuarios_id_usuario_seq'), primary_key=True, unique=True)
+    uuid = db.Column(db.String(250), unique=True)
     username = db.Column(db.String(100), unique=True)
     email = db.Column(db.String(100), unique=True)
     nombre = db.Column(db.String(100), unique=True)
@@ -51,16 +53,18 @@ class Usuario(db.Model):
     def __init__(self,
                  username: str,
                  email: str,
-                 nombre: str,
-                 apellido: str,
-                 fecha_nacimiento: datetime,
-                 genero: Genero,
-                 altura: float,
-                 peso: float,
-                 nivel: Nivel,
-                 img_url: str
+                 uuid: str = None,
+                 nombre: str = None,
+                 apellido: str = None,
+                 fecha_nacimiento: datetime = None,
+                 genero: Genero = None,
+                 altura: float = None,
+                 peso: float = None,
+                 nivel: Nivel = None,
+                 img_url: str = None
                  ):
         self.username = username
+        self.uuid = uuid
         self.email = email
         self.nombre = nombre
         self.apellido = apellido

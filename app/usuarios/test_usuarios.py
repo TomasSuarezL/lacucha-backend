@@ -67,3 +67,24 @@ def test_get_sesion_hoy_usuario(db, client):
     assert parser.parse(
         response['fechaEmpezado']).date() == datetime.utcnow().date()
     assert len(response['bloques']) == 2
+
+
+def test_crear_usuario(db, client):
+    # Arrange
+    usuario_body = {
+        "username": "usertest",
+        "email": "user@email.test",
+        "nombre": "User",
+        "apellido": "Test"
+    }
+
+    # Act
+    response = client.post(
+        f'/api/usuarios', json=usuario_body, follow_redirects=True).get_json()
+
+    # Assert
+    usuario = Usuario.query.filter_by(username="usertest").first()
+
+    assert response != None
+    assert usuario.email == "user@email.test"
+    assert usuario.nombre == "User"

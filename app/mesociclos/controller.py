@@ -5,7 +5,7 @@ from flask import jsonify, request, abort
 from flask_accepts.decorators.decorators import accepts, responds
 from flask_restx import Namespace, Resource
 from marshmallow.exceptions import ValidationError
-from app import db
+from app import db, firebase
 from app.mesociclos.service import MesocicloService
 from .schema import MesocicloUpdateSchema, MesocicloSchema
 
@@ -14,22 +14,24 @@ api = Namespace("Mesociclos", description="Mesociclo model")
 
 @api.route('/')
 class MesociclosResource(Resource):
+    @firebase.jwt_required
     def get(self):
         from .model import Mesociclo
         mesociclos = Mesociclo.query.order_by(Mesociclo.creado_en.desc()).all()
         return jsonify([mes.to_json() for mes in mesociclos])
 
-    # @accepts(schema=MesocicloSchema(session=db.session), api=api)
+    @firebase.jwt_required
+    @accepts(schema=MesocicloSchema(session=db.session), api=api)
     @responds(schema=MesocicloSchema(session=db.session))
     def post(self):
         try:
-            mesociclo = request.get_json()
+            mesociclo = request.parsed_obj
 
             if not mesociclo:
                 return {"message": "No se recibió información del mesociclo"}, 400
 
-            mesosciclo_schema = MesocicloSchema(session=db.session)
-            mesociclo = mesosciclo_schema.load(mesociclo)
+            # mesosciclo_schema = MesocicloSchema(session=db.session)
+            # mesociclo = mesosciclo_schema.load(mesociclo)
 
             newMesociclo = MesocicloService.create_mesociclo(mesociclo)
 
@@ -47,6 +49,7 @@ class MesociclosResource(Resource):
 
 @api.route('/<int:id>')
 class MesocicloResource(Resource):
+    @firebase.jwt_required
     @responds(schema=MesocicloSchema)
     def get(self, id):
         try:
@@ -56,6 +59,7 @@ class MesocicloResource(Resource):
             print(err)
             return err, 400
 
+    @firebase.jwt_required
     @accepts(schema=MesocicloUpdateSchema(session=db.session), api=api)
     @responds(schema=MesocicloSchema)
     def put(self, id):

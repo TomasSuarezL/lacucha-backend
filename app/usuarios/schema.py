@@ -1,4 +1,5 @@
 from marshmallow.fields import Nested, Pluck
+from marshmallow.utils import EXCLUDE
 from app.usuarios.model import Genero, Nivel, Usuario
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 from app import db
@@ -26,14 +27,16 @@ class UsuarioSchema(SQLAlchemySchema):
     class Meta:
         model = Usuario
         load_instance = True  # Optional: deserialize to model instances
+        unknown = EXCLUDE
 
     idUsuario = auto_field("id_usuario")
+    uuid = auto_field()
     username = auto_field()
     email = auto_field()
     nombre = auto_field()
     apellido = auto_field()
     fechaNacimiento = auto_field("fecha_nacimiento")
-    genero = Pluck(GeneroSchema, 'descripcion')
+    genero = Nested(GeneroSchema(session=db.session))
     altura = auto_field()
     peso = auto_field()
     nivel = Nested(NivelSchema(session=db.session))

@@ -3,7 +3,7 @@ from marshmallow.exceptions import ValidationError
 from flask import jsonify, request, abort
 from flask_restx import Namespace, Resource
 from flask_accepts import accepts, responds
-from app import db
+from app import db, firebase
 from app.bloques.schema import BloqueSchema
 from app.bloques.service import BloqueService
 
@@ -12,9 +12,11 @@ api = Namespace("Bloques", description="Bloques model")
 
 @api.route('/')
 class BloqueResource(Resource):
+    @firebase.jwt_required
     def get(self):
         return jsonify("Not implemented yet")
 
+    @firebase.jwt_required
     @accepts(schema=BloqueSchema(session=db.session), api=api)
     @responds(schema=BloqueSchema)
     def post(self):
