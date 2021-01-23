@@ -18,10 +18,17 @@ class EjercicioService:
         return Ejercicio.query.filter_by(nombre=nombre).first()
 
     @staticmethod
-    def get_por_nombre_patron(patron: str) -> List[Ejercicio]:
-        _patron = PatronMovimiento.query.filter(
-            PatronMovimiento.nombre == patron).first()
-        return Ejercicio.query.filter(Ejercicio.patron == _patron).all()
+    def get_por_nombre_patrones(patrones: List[str]) -> List[Ejercicio]:
+        if (patrones is None):
+            return Ejercicio.query.all()
+
+        _patrones = PatronMovimiento.query.filter(
+            PatronMovimiento.nombre.in_(patrones)).all()
+
+        if (_patrones is None):
+            return _patrones
+
+        return Ejercicio.query.filter(Ejercicio.id_patron.in_([p.id_patron_movimiento for p in _patrones])).all()
 
     @staticmethod
     def create_ejercicio(nombre: str, patron: str) -> Ejercicio:
@@ -45,8 +52,5 @@ class EjercicioService:
 
         nuevoEjercicio = Ejercicio(
             nombre=nombre, patron=_patron)
-
-        db.session.add(nuevoEjercicio)
-        db.session.commit()
 
         return nuevoEjercicio
