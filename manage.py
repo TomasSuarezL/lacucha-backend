@@ -14,7 +14,7 @@ from app.mesociclos.service import MesocicloService
 from app.usuarios.model import Genero, Nivel, Usuario
 from app.ejercicios.model import Ejercicio, PatronMovimiento
 
-app = create_app(config.ProductionConfig)
+app = create_app(config.DevelopmentConfig)
 
 migrate = Migrate(app, db)
 manager = Manager(app)
