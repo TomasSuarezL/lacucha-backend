@@ -1,23 +1,24 @@
 from datetime import datetime
-from app import db
 from flask import jsonify, request, abort
 from flask_accepts.decorators.decorators import accepts, responds
 from flask_restx import Namespace, Resource
+from app import db, firebase
 
 from .service import SesionService
 from .schema import SesionSchema, SesionUpdateSchema
-# from datetime import date
 
 api = Namespace("Sesiones", description="Sesiones model")
 
 
 @api.route('/')
 class SesionsResource(Resource):
+    @firebase.jwt_required
     def get(self):
         from .model import Sesion
         sesions = Sesion.query.order_by(Sesion.creado_en.desc()).all()
         return jsonify([ses.to_json() for ses in sesions])
 
+    @firebase.jwt_required
     @accepts(schema=SesionSchema(session=db.session), api=api)
     @responds(schema=SesionSchema)
     def post(self):
@@ -42,6 +43,7 @@ class SesionsResource(Resource):
 
 @api.route('/<int:id_sesion>')
 class SesionResource(Resource):
+    @firebase.jwt_required
     @accepts(schema=SesionUpdateSchema(session=db.session), api=api)
     @responds(schema=SesionSchema)
     def put(self, id_sesion):

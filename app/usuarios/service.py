@@ -8,8 +8,8 @@ from .model import Usuario
 
 class UsuarioService:
     @staticmethod
-    def get_usuario_by_username(username: str) -> List[Usuario]:
-        return Usuario.query.filter_by(username=username).first()
+    def get_usuario_by_uuid(uuid: str) -> List[Usuario]:
+        return Usuario.query.filter_by(uuid=uuid).first()
 
     @staticmethod
     def get_proxima_sesion(id_usuario: int) -> Sesion:

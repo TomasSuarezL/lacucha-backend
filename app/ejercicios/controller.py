@@ -2,7 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource
 from flask_accepts.decorators.decorators import accepts, responds
 
-from app import db
+from app import db, firebase
 from app.ejercicios.schema import EjercicioPostSchema, EjercicioSchema
 from app.ejercicios.service import EjercicioService
 
@@ -11,6 +11,8 @@ api = Namespace("Ejercicios", description="Ejercicios model")
 
 @api.route('/')
 class EjercicioResource(Resource):
+
+    @firebase.jwt_required
     @accepts(dict(name='patrones', type=str), api=api)
     @responds(schema=EjercicioSchema(many=True))
     def get(self):
@@ -20,6 +22,7 @@ class EjercicioResource(Resource):
         ejercicios = EjercicioService.get_por_nombre_patrones(_patrones)
         return ejercicios
 
+    @firebase.jwt_required
     @accepts(schema=EjercicioPostSchema(session=db.session), api=api)
     @responds(schema=EjercicioPostSchema)
     def post(self):
@@ -32,8 +35,3 @@ class EjercicioResource(Resource):
         db.session.commit()
 
         return ejercicio
-
-
-string_list = "Traccion,Empuje"
-
-string_list.split(',')
