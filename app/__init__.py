@@ -5,19 +5,24 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Api
 from flask_cors import CORS
+from flask_firebase_admin import FirebaseAdmin
 
 from .routes import register_routes
 
 db = SQLAlchemy()
 api = Api()
+firebase = FirebaseAdmin()
 
 
 def create_app(_config=None):
+    environ = os.environ.get("FLASK_ENV")
+    if _config is None:
+        _config = config.ProductionConfig if environ == 'production' else config.DevelopmentConfig
     app = Flask(__name__)
-    app.config.from_object(
-        _config if _config != None else config.TestingConfig)
+    app.config.from_object(_config)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     api.init_app(app)
+    firebase.init_app(app)
     register_routes(api, app)
     db.init_app(app)
     CORS(app)
@@ -29,6 +34,3 @@ def create_app(_config=None):
         return "Ok"
 
     return app
-
-
-create_app()
