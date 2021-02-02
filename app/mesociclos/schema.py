@@ -69,6 +69,7 @@ class MesocicloUpdateSchema(SQLAlchemySchema):
     class Meta:
         model = Mesociclo
         load_instance = True
+        unknown = EXCLUDE
 
     idMesociclo = auto_field("id_mesociclo", required=True)
     usuario = Nested(UsuarioSchema(session=db.session))

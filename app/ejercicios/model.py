@@ -38,12 +38,14 @@ class Ejercicio(db.Model):
         'patrones_movimiento.id_patron_movimiento'))
     patron = db.relationship("PatronMovimiento", uselist=False,
                              lazy=True, backref=db.backref('ejercicios', lazy=True))
+    url_video = db.Column(db.String())
     creado_en = db.Column(db.DateTime, default=datetime.utcnow)
     actualizado_en = db.Column(db.DateTime, default=None)
 
-    def __init__(self, nombre, patron=None):
+    def __init__(self, nombre, patron=None, url_video=None):
         self.nombre = nombre
         self.patron = patron
+        self.url_video = url_video
 
     def __repr__(self):
         return '<Ejercicio {}>'.format(self.id_ejercicio)
@@ -53,6 +55,7 @@ class Ejercicio(db.Model):
             "id": self.id_ejercicio,
             "nombre": self.nombre,
             "patron": self.patron.nombre,
+            "url_video": self.url_video,
             "creado_en": self.creado_en,
             "actualizado_en": self.actualizado_en
         }
