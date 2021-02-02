@@ -1,5 +1,6 @@
-from flask.globals import session
-from marshmallow.fields import Nested, Pluck
+
+from marshmallow.fields import Pluck
+from marshmallow.utils import EXCLUDE
 from marshmallow_sqlalchemy.schema.sqlalchemy_schema import SQLAlchemySchema, auto_field
 from app.ejercicios.model import Ejercicio, PatronMovimiento
 from app import db
@@ -19,10 +20,12 @@ class EjercicioSchema(SQLAlchemySchema):
     class Meta:
         model = Ejercicio
         load_instance = True
+        unknown = EXCLUDE
 
     idEjercicio = auto_field("id_ejercicio")
     nombre = auto_field()
     patron = Pluck(PatronSchema(session=db.session), 'nombre', dump_only=True)
+    urlVideo = auto_field("url_video")
     creado_en = auto_field(dump_only=True)
     actualizado_en = auto_field(dump_only=True)
 
@@ -33,6 +36,8 @@ class EjercicioPostSchema(SQLAlchemySchema):
     class Meta:
         model = Ejercicio
         load_instance = True
+        unknown = EXCLUDE
 
     nombre = auto_field(required=True)
     patron = Pluck(PatronSchema(session=db.session), 'nombre', required=True)
+    urlVideo = auto_field('url_video')

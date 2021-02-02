@@ -30,9 +30,6 @@ class MesociclosResource(Resource):
             if not mesociclo:
                 return {"message": "No se recibió información del mesociclo"}, 400
 
-            # mesosciclo_schema = MesocicloSchema(session=db.session)
-            # mesociclo = mesosciclo_schema.load(mesociclo)
-
             newMesociclo = MesocicloService.create_mesociclo(mesociclo)
 
             db.session.add(newMesociclo)
