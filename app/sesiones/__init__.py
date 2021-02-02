@@ -1,5 +1,3 @@
-from .model import Sesion
-
 BASE_ROUTE = "sesiones"
 
 

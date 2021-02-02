@@ -25,6 +25,8 @@ class StagingConfig(Config):
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL')
+    GOOGLE_APPLICATION_CREDENTIALS = "./lacucha-9e5250a9989e.json"
 
 
 class TestingConfig(Config):
