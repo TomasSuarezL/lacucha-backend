@@ -33,6 +33,36 @@ def test_crear_usuario_valido(db):
 
 
 # Controller
+def test_get_usuarios_search(db, client, token):
+    ## This will test a couple of cases, correct and incorrect. This is not ideal, but I decided that the test is so simple that is
+    ## unnecesary to recreate db and request new tokens for each case, and putting them all together was better.
+
+    # Arrange
+    create_usuario_db(db)
+    search_good = "Usua"  # Partial name of the user created in create_usuario_db
+    search_bad = "User"  # This name shouldn't exist on db
+
+    # Act
+    response_good = client.get(
+        f"/api/usuarios?search={search_good}",
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
+    response_bad = client.get(
+        f"/api/usuarios?search={search_bad}",
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
+
+    # Assert
+    assert response_good != None
+    assert len(response_good) == 1
+    assert response_good[0]["nombre"] == "Usuario"
+
+    assert response_bad != None
+    assert len(response_bad) == 0
+
+
 def test_get_proxima_sesion_usuario(db, client):
     # Arrange
     create_usuario_db(db)
@@ -42,13 +72,14 @@ def test_get_proxima_sesion_usuario(db, client):
 
     # Act
     response = client.get(
-        f'/api/usuarios/{usuario.id_usuario}/mesociclos/proximaSesion',  follow_redirects=True).get_json()
+        f"/api/usuarios/{usuario.id_usuario}/mesociclos/proximaSesion",
+        follow_redirects=True,
+    ).get_json()
 
     # Assert
     assert response != None
-    assert parser.parse(
-        response['fechaEmpezado']).date() == datetime.utcnow().date()
-    assert len(response['bloques']) == 2
+    assert parser.parse(response["fechaEmpezado"]).date() == datetime.utcnow().date()
+    assert len(response["bloques"]) == 2
 
 
 def test_get_sesion_hoy_usuario(db, client):
@@ -60,13 +91,14 @@ def test_get_sesion_hoy_usuario(db, client):
 
     # Act
     response = client.get(
-        f'/api/usuarios/{usuario.id_usuario}/mesociclos/sesionHoy',  follow_redirects=True).get_json()
+        f"/api/usuarios/{usuario.id_usuario}/mesociclos/sesionHoy",
+        follow_redirects=True,
+    ).get_json()
 
     # Assert
     assert response != None
-    assert parser.parse(
-        response['fechaEmpezado']).date() == datetime.utcnow().date()
-    assert len(response['bloques']) == 2
+    assert parser.parse(response["fechaEmpezado"]).date() == datetime.utcnow().date()
+    assert len(response["bloques"]) == 2
 
 
 def test_crear_usuario(db, client):
@@ -75,12 +107,13 @@ def test_crear_usuario(db, client):
         "username": "usertest",
         "email": "user@email.test",
         "nombre": "User",
-        "apellido": "Test"
+        "apellido": "Test",
     }
 
     # Act
     response = client.post(
-        f'/api/usuarios', json=usuario_body, follow_redirects=True).get_json()
+        f"/api/usuarios", json=usuario_body, follow_redirects=True
+    ).get_json()
 
     # Assert
     usuario = Usuario.query.filter_by(username="usertest").first()

@@ -57,4 +57,5 @@ class SesionResource(Resource):
             return sesion
 
         except AttributeError as err:
+            print(err)
             abort(400, err)

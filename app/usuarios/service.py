@@ -8,12 +8,25 @@ from .model import Usuario
 
 class UsuarioService:
     @staticmethod
-    def get_usuario_by_uuid(uuid: str) -> List[Usuario]:
+    def get_usuario_by_uuid(uuid: str) -> Usuario:
         return Usuario.query.filter_by(uuid=uuid).first()
 
     @staticmethod
+    def get_usuarios(search: str) -> List[Usuario]:
+        """
+        Get the Usuarios filtered by the search string.   
+
+                Parameters:
+                        search (str): string that will be used to filter by name, surname and email.   
+
+                Returns:
+                        List[Usuario]: Filtered List of Usuarios. 
+        """
+        return Usuario.query.filter(Usuario.nombre.ilike(f"%{search}%")).all()
+
+    @staticmethod
     def get_proxima_sesion(id_usuario: int) -> Sesion:
-        '''
+        """
         Get the next Sesion of the current Mesociclo for the Usuario, if any. If there isn't any Sesion left to do in the Mesociclo, return None,
         thus we should suggest creating the next Mesociclo.   
 
@@ -22,18 +35,21 @@ class UsuarioService:
 
                 Returns:
                         Sesion: Sesion object with the next Sesion to do. 
-        '''
+        """
 
         mesociclo = MesocicloService.get_mesosiclo_activo_usuario(id_usuario)
 
-        sesion = Sesion.query.filter_by(mesociclo=mesociclo, fecha_finalizado=None).order_by(
-            Sesion.fecha_empezado.asc()).first()
+        sesion = (
+            Sesion.query.filter_by(mesociclo=mesociclo, fecha_finalizado=None)
+            .order_by(Sesion.fecha_empezado.asc())
+            .first()
+        )
 
         return sesion
 
     @staticmethod
     def get_today_sesion(id_usuario: int) -> Sesion:
-        '''
+        """
         Get today's Sesion if any.   
 
                 Parameters:
@@ -41,10 +57,10 @@ class UsuarioService:
 
                 Returns:
                         Sesion or None: Sesion object with Session. 
-        '''
+        """
         mesociclos = MesocicloService.get_all_mesosiclos_usuario(id_usuario)
 
         return Sesion.query.filter(
             Sesion.id_mesociclo.in_([m.id_mesociclo for m in mesociclos]),
-            db.func.date(Sesion.fecha_empezado) == datetime.utcnow().date()
+            db.func.date(Sesion.fecha_empezado) == datetime.utcnow().date(),
         ).first()

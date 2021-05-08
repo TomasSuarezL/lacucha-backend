@@ -41,5 +41,7 @@ class UsuarioSchema(SQLAlchemySchema):
     peso = auto_field()
     nivel = Nested(NivelSchema(session=db.session))
     imgUrl = auto_field("img_url")
+    rol = auto_field()
     creadoEn = auto_field("creado_en", dump_only=True)
+    bajaEn = auto_field("baja_en", dump_only=True)
     actualizadoEn = auto_field("actualizado_en", dump_only=True)

@@ -1,7 +1,6 @@
-from flask.globals import session
 from app.mesociclos.model import Mesociclo
 from datetime import datetime
-from flask import jsonify, request, abort
+from flask import jsonify, request
 from flask_accepts.decorators.decorators import accepts, responds
 from flask_restx import Namespace, Resource
 from marshmallow.exceptions import ValidationError
@@ -76,4 +75,5 @@ class MesocicloResource(Resource):
             print(err)
             return err, 400
         except ValidationError as verr:
+            print(verr)
             return verr, 400

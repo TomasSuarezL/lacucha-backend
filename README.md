@@ -53,12 +53,19 @@ pip install -r requirements.txt
 
 Create a `.env` file with Databases URLs:
 
-```
+```python
 DATABASE_URL="postgresql://postgres_user:postgres_password@prod_server:5432/lacucha"
 TEST_DATABASE_URL="postgresql://postgres_user:postgres_password@127.0.0.1:5432/lacucha_tests"
 ```
 
-Run the test, on the root folder:
+Additionally, we need to supply valid Firebase Credentiasl to get a Token for testing protected routes.
+
+```python
+TEST_USER_EMAIL="email"
+TEST_USER_PASSWORD="password"
+```
+
+To run the tests, on the root folder:
 
 ```
 pytest

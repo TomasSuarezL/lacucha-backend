@@ -1,14 +1,14 @@
+import requests
+import config
+import os
 from app.mesociclos.model import EstadoMesociclo, Mesociclo, Objetivo, Organizacion
 from app.usuarios.model import Genero, Nivel, Usuario
 from datetime import datetime, timedelta
 from app.ejercicios.model import Ejercicio, PatronMovimiento
 from app.bloques.model import Bloque, EjercicioXBloque
 from app.sesiones.model import Sesion
-import os
-import config
 
 import pytest
-from flask_sqlalchemy import SQLAlchemy
 
 from app import create_app
 
@@ -19,12 +19,14 @@ def app():
 
 
 @pytest.fixture
-def client(app): return app.test_client()
+def client(app):
+    return app.test_client()
 
 
 @pytest.fixture
 def db(app):
     from app import db
+
     with app.app_context():
         db.drop_all()
         db.create_all()
@@ -36,6 +38,22 @@ def db(app):
         db.session.commit()
 
 
+@pytest.fixture(scope="session")
+def token():
+    email = os.environ.get("TEST_USER_EMAIL")
+    password = os.environ.get("TEST_USER_PASSWORD")
+    response = requests.post(
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyD98jGZGIKFVLBQGgZi9MCdJeGho4zIlgI",
+        data={
+            "email": "tomas.sl@hotmail.com",
+            "password": "f1r3b4s3",
+            "returnSecureToken": True,
+        },
+    )
+    token = response.json().get("idToken")
+    return token
+
+
 def create_reference_data(db):
     # Patrones
     trenSuperior = PatronMovimiento(nombre="Tren Superior")
@@ -45,22 +63,31 @@ def create_reference_data(db):
     db.session.add_all([trenSuperior, trenInferior, zonaMedia])
 
     # Ejercicios
-    traditionalPullUps = Ejercicio(
-        nombre="Traditional Push-ups", patron=trenSuperior)
-    diamondPushUps = Ejercicio(
-        nombre="Diamond Push-ups", patron=trenSuperior)
+    traditionalPullUps = Ejercicio(nombre="Traditional Push-ups", patron=trenSuperior)
+    diamondPushUps = Ejercicio(nombre="Diamond Push-ups", patron=trenSuperior)
     pullUps = Ejercicio(nombre="Pull-ups", patron=trenSuperior)
     chinUps = Ejercicio(nombre="Chin-ups", patron=trenSuperior)
-    bulgarianSquats = Ejercicio(
-        nombre="Bulgarian Squats", patron=trenInferior)
+    bulgarianSquats = Ejercicio(nombre="Bulgarian Squats", patron=trenInferior)
     skateSquats = Ejercicio(nombre="Skate Squats", patron=trenInferior)
     cossakSquats = Ejercicio(nombre="Cossak Squats", patron=trenInferior)
     hollowPress = Ejercicio(nombre="Hollow Press", patron=zonaMedia)
     botesMov = Ejercicio(nombre="Botes Movimiento", patron=zonaMedia)
     lAbs = Ejercicio(nombre="L-Abs", patron=zonaMedia)
 
-    db.session.add_all([traditionalPullUps, diamondPushUps, pullUps, chinUps,
-                        bulgarianSquats, skateSquats, cossakSquats, hollowPress, botesMov, lAbs])
+    db.session.add_all(
+        [
+            traditionalPullUps,
+            diamondPushUps,
+            pullUps,
+            chinUps,
+            bulgarianSquats,
+            skateSquats,
+            cossakSquats,
+            hollowPress,
+            botesMov,
+            lAbs,
+        ]
+    )
 
     # Niveles
     principiante = Nivel("Principiante")
@@ -100,25 +127,24 @@ def create_sesion_db(db):
     ejInferior = db.session.query(Ejercicio).first()
     ejMedia = db.session.query(Ejercicio).first()
 
-    exbSuperior = EjercicioXBloque(
-        ejercicio=ejSuperior, repeticiones=10, carga=30)
-    exbInferior = EjercicioXBloque(
-        ejercicio=ejInferior, repeticiones=10, carga=50)
+    exbSuperior = EjercicioXBloque(ejercicio=ejSuperior, repeticiones=10, carga=30)
+    exbInferior = EjercicioXBloque(ejercicio=ejInferior, repeticiones=10, carga=50)
     exbMedia = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
 
-    exbSuperior2 = EjercicioXBloque(
-        ejercicio=ejSuperior, repeticiones=10, carga=30)
-    exbInferior2 = EjercicioXBloque(
-        ejercicio=ejInferior, repeticiones=10, carga=50)
+    exbSuperior2 = EjercicioXBloque(ejercicio=ejSuperior, repeticiones=10, carga=30)
+    exbInferior2 = EjercicioXBloque(ejercicio=ejInferior, repeticiones=10, carga=50)
     exbMedia2 = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
 
     nuevoBloque1 = Bloque(
-        ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4)
+        ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4
+    )
     nuevoBloque2 = Bloque(
-        ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4)
+        ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4
+    )
 
     nuevaSesion = Sesion(
-        bloques=[nuevoBloque1, nuevoBloque2], fecha_empezado=datetime.utcnow())
+        bloques=[nuevoBloque1, nuevoBloque2], fecha_empezado=datetime.utcnow()
+    )
 
     db.session.add(nuevaSesion)
     db.session.commit()
@@ -129,6 +155,7 @@ def create_usuario_db(db):
     nivel = db.session.query(Nivel).first()
 
     usuario = Usuario(
+        uuid="Oueo4BZj6iZPFyXFV04o8n7rVc83",
         username="usuarioprueba",
         email="usuario@prueba.com",
         nombre="Usuario",
@@ -138,7 +165,8 @@ def create_usuario_db(db):
         altura=1.77,
         peso=68,
         nivel=nivel,
-        img_url="prueba.com/img"
+        img_url="prueba.com/img",
+        rol="admin",
     )
 
     db.session.add(usuario)
@@ -150,40 +178,45 @@ def create_mesociclo_db(db):
     ejInferior = db.session.query(Ejercicio).first()
     ejMedia = db.session.query(Ejercicio).first()
 
-    exbSuperior = EjercicioXBloque(
-        ejercicio=ejSuperior, repeticiones=10, carga=30)
-    exbInferior = EjercicioXBloque(
-        ejercicio=ejInferior, repeticiones=10, carga=50)
+    exbSuperior = EjercicioXBloque(ejercicio=ejSuperior, repeticiones=10, carga=30)
+    exbInferior = EjercicioXBloque(ejercicio=ejInferior, repeticiones=10, carga=50)
     exbMedia = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
 
-    exbSuperior2 = EjercicioXBloque(
-        ejercicio=ejSuperior, repeticiones=10, carga=30)
-    exbInferior2 = EjercicioXBloque(
-        ejercicio=ejInferior, repeticiones=10, carga=50)
+    exbSuperior2 = EjercicioXBloque(ejercicio=ejSuperior, repeticiones=10, carga=30)
+    exbInferior2 = EjercicioXBloque(ejercicio=ejInferior, repeticiones=10, carga=50)
     exbMedia2 = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
 
     nuevoBloque1 = Bloque(
-        ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4)
+        ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4
+    )
     nuevoBloque2 = Bloque(
-        ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4)
+        ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4
+    )
 
     nuevoBloque3 = Bloque(
-        ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4)
+        ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4
+    )
     nuevoBloque4 = Bloque(
-        ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4)
+        ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4
+    )
 
     nuevaSesion1 = Sesion(
-        bloques=[nuevoBloque1, nuevoBloque2], fecha_empezado=datetime.utcnow())
+        bloques=[nuevoBloque1, nuevoBloque2], fecha_empezado=datetime.utcnow()
+    )
     nuevaSesion2 = Sesion(
-        bloques=[nuevoBloque3, nuevoBloque4], fecha_empezado=datetime.utcnow() + timedelta(days=1))
+        bloques=[nuevoBloque3, nuevoBloque4],
+        fecha_empezado=datetime.utcnow() + timedelta(days=1),
+    )
 
     usuario = db.session.query(Usuario).first()
     objetivo = db.session.query(Objetivo).first()
     organizacion = db.session.query(Organizacion).first()
-    ej_superior = db.session.query(Ejercicio).filter_by(
-        nombre="Traditional Push-ups").first()
-    ej_inferior = db.session.query(Ejercicio).filter_by(
-        nombre="Bulgarian Squats").first()
+    ej_superior = (
+        db.session.query(Ejercicio).filter_by(nombre="Traditional Push-ups").first()
+    )
+    ej_inferior = (
+        db.session.query(Ejercicio).filter_by(nombre="Bulgarian Squats").first()
+    )
 
     mesociclo = Mesociclo(
         usuario=usuario,
@@ -194,7 +227,7 @@ def create_mesociclo_db(db):
         principal_tren_superior=ej_superior,
         semanas_por_mesociclo=4,
         sesiones_por_semana=3,
-        sesiones=[nuevaSesion1, nuevaSesion2]
+        sesiones=[nuevaSesion1, nuevaSesion2],
     )
 
     db.session.add(mesociclo)
