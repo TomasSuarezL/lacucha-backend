@@ -36,7 +36,7 @@ class CreateUsuarioResource(Resource):
     @responds(schema=UsuarioSchema(many=True))
     def get(self):
         try:
-            _search = request.args["search"] or ""
+            _search = request.args.get("search") or ""
             usuario = UsuarioService.get_usuario_by_uuid(request.jwt_payload["sub"])
 
             if usuario.rol != "admin":

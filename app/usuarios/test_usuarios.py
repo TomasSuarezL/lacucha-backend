@@ -39,28 +39,78 @@ def test_get_usuarios_search(db, client, token):
 
     # Arrange
     create_usuario_db(db)
-    search_good = "Usua"  # Partial name of the user created in create_usuario_db
-    search_bad = "User"  # This name shouldn't exist on db
+    search_good_nombre = "Usua"  # Partial name of the user created in create_usuario_db
+    search_bad_nombre = "User"  # This name shouldn't exist on db
 
     # Act
-    response_good = client.get(
-        f"/api/usuarios?search={search_good}",
+    response_good_nombre = client.get(
+        f"/api/usuarios?search={search_good_nombre}",
         follow_redirects=True,
         headers={"Authorization": f"Bearer {token}"},
     ).get_json()
-    response_bad = client.get(
-        f"/api/usuarios?search={search_bad}",
+    response_bad_nombre = client.get(
+        f"/api/usuarios?search={search_bad_nombre}",
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
+
+    search_good_apellido = (
+        "Prue"  # Partial surname of the user created in create_usuario_db
+    )
+    search_bad_apellido = "Prun"  # This apellido shouldn't exist on db
+
+    # Act
+    response_good_apellido = client.get(
+        f"/api/usuarios?search={search_good_apellido}",
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
+    response_bad_apellido = client.get(
+        f"/api/usuarios?search={search_bad_apellido}",
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
+
+    search_good_email = (
+        "rio@pr"  # Partial email of the user created in create_usuario_db
+    )
+    search_bad_email = "fafa"  # This email shouldn't exist on db
+
+    # Act
+    response_good_email = client.get(
+        f"/api/usuarios?search={search_good_email}",
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
+    response_bad_email = client.get(
+        f"/api/usuarios?search={search_bad_email}",
         follow_redirects=True,
         headers={"Authorization": f"Bearer {token}"},
     ).get_json()
 
     # Assert
-    assert response_good != None
-    assert len(response_good) == 1
-    assert response_good[0]["nombre"] == "Usuario"
+    assert None not in (
+        response_good_nombre,
+        response_good_apellido,
+        response_good_email,
+    )
+    assert 1 in {
+        len(response_good_nombre),
+        len(response_good_apellido),
+        len(response_good_email),
+    }
+    assert "Usuario" in {
+        response_good_nombre[0]["nombre"],
+        response_good_apellido[0]["nombre"],
+        response_good_email[0]["nombre"],
+    }
 
-    assert response_bad != None
-    assert len(response_bad) == 0
+    assert None not in (response_bad_nombre, response_bad_apellido, response_bad_email)
+    assert 0 in {
+        len(response_bad_nombre),
+        len(response_bad_apellido),
+        len(response_bad_email),
+    }
 
 
 def test_get_proxima_sesion_usuario(db, client):

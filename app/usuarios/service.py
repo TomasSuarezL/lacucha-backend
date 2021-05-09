@@ -22,7 +22,11 @@ class UsuarioService:
                 Returns:
                         List[Usuario]: Filtered List of Usuarios. 
         """
-        return Usuario.query.filter(Usuario.nombre.ilike(f"%{search}%")).all()
+        return Usuario.query.filter(
+            Usuario.nombre.ilike(f"%{search}%")
+            | Usuario.apellido.ilike(f"%{search}%")
+            | Usuario.email.ilike(f"%{search}%")
+        ).all()
 
     @staticmethod
     def get_proxima_sesion(id_usuario: int) -> Sesion:
