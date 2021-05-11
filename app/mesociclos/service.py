@@ -1,6 +1,7 @@
-from app.sesiones.model import Sesion
-from marshmallow.exceptions import ValidationError
+from sqlalchemy import desc
 from typing import List
+from marshmallow.exceptions import ValidationError
+from app.sesiones.model import Sesion
 from .model import Mesociclo
 from app.sesiones.service import SesionService
 
@@ -12,7 +13,7 @@ class MesocicloService:
 
     @staticmethod
     def get_all_mesosiclos_usuario(id_usuario: int) -> List[Mesociclo]:
-        '''
+        """
         List ALL Mesociclos of the specified Usuario, by its id (id_usuario). 
 
                 Parameters:
@@ -20,12 +21,16 @@ class MesocicloService:
 
                 Returns:
                         List[Mesociclo]: List of Mesociclos for the Usuario.  
-        '''
-        return Mesociclo.query.filter_by(id_usuario=id_usuario).all()
+        """
+        return (
+            Mesociclo.query.filter_by(id_usuario=id_usuario)
+            .order_by(desc(Mesociclo.creado_en))
+            .all()
+        )
 
     @staticmethod
     def get_mesosiclo_activo_usuario(id_usuario: int) -> Mesociclo:
-        '''
+        """
         Get the active (estado activo) Mesociclo of the specified Usuario, by its id (id_usuario). 
 
                 Parameters:
@@ -33,12 +38,12 @@ class MesocicloService:
 
                 Returns:
                         Mesociclo: Active Mesociclo for the Usuario.  
-        '''
+        """
         return Mesociclo.query.filter_by(id_usuario=id_usuario, id_estado=1).first()
 
     @staticmethod
     def create_mesociclo(mesociclo: Mesociclo) -> Mesociclo:
-        '''
+        """
         Create a new Mesociclo object from the deserealized data recieved in the request
 
                 Parameters:
@@ -48,11 +53,12 @@ class MesocicloService:
 
                 Returns:
                         Mesociclo: new object created.  
-        '''
+        """
 
-        sesiones = [SesionService.create_sesion(
-            sesion) for sesion in mesociclo.sesiones]
-        if (len(sesiones) == 0):
+        sesiones = [
+            SesionService.create_sesion(sesion) for sesion in mesociclo.sesiones
+        ]
+        if len(sesiones) == 0:
             raise ValidationError("Ingresar al menos 1 Sesión")
 
         mesociclo.sesiones = sesiones

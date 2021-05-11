@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Union
 from sqlalchemy import exc
 from flask import request, abort
 from flask_restx import Namespace, Resource
@@ -13,7 +14,7 @@ from app import db, firebase
 api = Namespace("Usuarios", description="Usuarios model")
 
 
-@api.route("/")
+@api.route("")
 class CreateUsuarioResource(Resource):
     @firebase.jwt_required
     @accepts(schema=UsuarioSchema(session=db.session), api=api)
@@ -33,10 +34,13 @@ class CreateUsuarioResource(Resource):
         return usuario
 
     @firebase.jwt_required
+    @accepts(
+        dict(name="search", nullable=True, type=str), api=api,
+    )
     @responds(schema=UsuarioSchema(many=True))
     def get(self):
         try:
-            _search = request.args.get("search") or ""
+            _search = request.parsed_args["search"] or ""
             usuario = UsuarioService.get_usuario_by_uuid(request.jwt_payload["sub"])
 
             if usuario.rol != "admin":

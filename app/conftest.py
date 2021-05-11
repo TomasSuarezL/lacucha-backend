@@ -44,11 +44,7 @@ def token():
     password = os.environ.get("TEST_USER_PASSWORD")
     response = requests.post(
         "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyD98jGZGIKFVLBQGgZi9MCdJeGho4zIlgI",
-        data={
-            "email": "tomas.sl@hotmail.com",
-            "password": "f1r3b4s3",
-            "returnSecureToken": True,
-        },
+        data={"email": email, "password": password, "returnSecureToken": True,},
     )
     token = response.json().get("idToken")
     return token

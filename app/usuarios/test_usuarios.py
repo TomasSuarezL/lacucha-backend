@@ -113,6 +113,29 @@ def test_get_usuarios_search(db, client, token):
     }
 
 
+def test_controller_get_valid_mesociclo(db, client, token):
+    # Arrange
+    create_usuario_db(db)
+    create_mesociclo_db(db)
+
+    # Act
+    mesociclo = client.get(
+        f"/api/usuarios/{1}/mesociclos?activo=False",
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
+
+    # Assert
+    assert mesociclo[0]["idMesociclo"] == 1
+    assert mesociclo[0]["usuario"]["username"] == "usuarioprueba"
+    assert mesociclo[0]["estado"]["descripcion"] == "Activo"
+    assert mesociclo[0]["objetivo"]["descripcion"] == "Acondicionamiento General"
+    assert mesociclo[0]["organizacion"]["idOrganizacion"] == 1
+    assert mesociclo[0]["principalTrenInferior"]["nombre"] == "Bulgarian Squats"
+    assert mesociclo[0]["semanasPorMesociclo"] == 4
+    assert len(mesociclo[0]["sesiones"]) == 2
+
+
 def test_get_proxima_sesion_usuario(db, client):
     # Arrange
     create_usuario_db(db)
