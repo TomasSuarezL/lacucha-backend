@@ -9,13 +9,17 @@ from datetime import datetime, timedelta
 # Sesion SERVICE Tests
 def test_create_sesion(db):
     # Arrange
-    ej_x_bloque = EjercicioXBloque(ejercicio=Ejercicio(
-        "Traditional Push-ups"), repeticiones=10, carga=20.1)
+    ej_x_bloque = EjercicioXBloque(
+        ejercicio=Ejercicio("Traditional Push-ups"), repeticiones=10, carga=20.1
+    )
 
     bloque = Bloque(ejercicios=[ej_x_bloque], num_bloque=1, series=4)
 
-    sesion = Sesion(fecha_empezado=str(datetime.utcnow()), fecha_finalizado=str(
-        datetime.utcnow() + timedelta(hours=1)), bloques=[bloque])
+    sesion = Sesion(
+        fecha_empezado=str(datetime.utcnow()),
+        fecha_finalizado=str(datetime.utcnow() + timedelta(hours=1)),
+        bloques=[bloque],
+    )
 
     # Act
     sesion = SesionService.create_sesion(sesion)
@@ -37,25 +41,33 @@ def test_get_today_sesion(db):
 
 
 # Sesion CONTROLLER tests
-def test_controller_create_sesion(db, client):
+def test_controller_create_sesion(db, client, token):
     # Arrange
     sesion_body = {
         "fechaEmpezado": str(datetime.utcnow()),
         "bloques": [
-            {"numBloque": 1,
-             "series": 4,
-             "ejercicios": [
-                 {"ejercicio": {"nombre": "Traditional Push-ups"},
-                  "repeticiones": 10,
-                  "carga": 20.1}
-             ]
-             }
-        ]
+            {
+                "numBloque": 1,
+                "series": 4,
+                "ejercicios": [
+                    {
+                        "ejercicio": {"idEjercicio": 1},
+                        "numEjercicio": 1,
+                        "repeticiones": 10,
+                        "carga": 20.1,
+                    }
+                ],
+            }
+        ],
     }
 
     # Act
-    rv = client.post('/api/sesiones', json=sesion_body,
-                     follow_redirects=True).get_json()
+    rv = client.post(
+        "/api/sesiones",
+        json=sesion_body,
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
 
     # Assert
     sesion = Sesion.query.first()
@@ -65,7 +77,7 @@ def test_controller_create_sesion(db, client):
     assert sesion.bloques[0].ejercicios[0].ejercicio.patron.nombre == "Tren Superior"
 
 
-def test_controller_update_sesion(db, client):
+def test_controller_update_sesion(db, client, token):
     # Arrange
     create_sesion_db(db)
     id_sesion = 1
@@ -75,25 +87,65 @@ def test_controller_update_sesion(db, client):
         "fechaFinalizado": str(datetime.utcnow() + timedelta(hours=1)),
         "fechaEmpezado": str(datetime(2020, 11, 1)),
         "bloques": [
-            {"idBloque": 1,
-             "numBloque": 1,
-             "series": 5,
-             "ejercicios": [
-                 {"idEjerciciosxbloque": 1,
-                  "ejercicio": {"idEjercicio": 2},
-                  "repeticiones": 16,
-                  "carga": 20.1},
-                 {"idEjerciciosxbloque": 2},
-                 {"idEjerciciosxbloque": 3}
-             ]
-             },
-            {"idBloque": 2}
-        ]
+            {
+                "idBloque": 1,
+                "numBloque": 1,
+                "series": 5,
+                "ejercicios": [
+                    {
+                        "idEjerciciosxbloque": 1,
+                        "numEjercicio": 5,
+                        "ejercicio": {"idEjercicio": 2},
+                        "repeticiones": 16,
+                        "carga": 20.1,
+                    },
+                    {"idEjerciciosxbloque": 2},
+                    {"idEjerciciosxbloque": 3},
+                    # Agrego un ej
+                    {
+                        "ejercicio": {"idEjercicio": 2},
+                        "numEjercicio": 4,
+                        "repeticiones": 20,
+                        "carga": 22,
+                    },
+                ],
+            },
+            ## {"idBloque": 2},  No mando el bloque2 ("eliminado")
+            ## Agrego un nuevo bloque
+            {
+                "numBloque": 2,
+                "series": 6,
+                "ejercicios": [
+                    {
+                        "ejercicio": {"idEjercicio": 2},
+                        "numEjercicio": 1,
+                        "repeticiones": 20,
+                        "carga": 22,
+                    },
+                    {
+                        "ejercicio": {"idEjercicio": 1},
+                        "numEjercicio": 2,
+                        "repeticiones": 21,
+                        "carga": 23,
+                    },
+                    {
+                        "ejercicio": {"idEjercicio": 3},
+                        "numEjercicio": 3,
+                        "repeticiones": 22,
+                        "carga": 24,
+                    },
+                ],
+            },
+        ],
     }
 
     # Act
     rv = client.put(
-        f'/api/sesiones/{str(id_sesion)}', json=sesion_body, follow_redirects=True).get_json()
+        f"/api/sesiones/{str(id_sesion)}",
+        json=sesion_body,
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
 
     sesion = Sesion.query.first()
 
@@ -101,18 +153,23 @@ def test_controller_update_sesion(db, client):
     assert sesion.fecha_finalizado != None
     assert sesion.fecha_empezado.date() == datetime(2020, 11, 1).date()
     assert len(sesion.bloques) == 2
-    assert len(sesion.bloques[0].ejercicios) == 3
+    assert len(sesion.bloques[0].ejercicios) == 4
     bloques = sorted(sesion.bloques, key=lambda k: k.id_bloque)
     bloque1_ejercicios = sorted(
-        bloques[0].ejercicios, key=lambda k: k.id_ejerciciosxbloque)
+        bloques[0].ejercicios, key=lambda k: k.id_ejerciciosxbloque
+    )
+    bloque2_ejercicios = sorted(
+        bloques[1].ejercicios, key=lambda k: k.id_ejerciciosxbloque
+    )
     assert bloque1_ejercicios[0].repeticiones == 16
     assert bloque1_ejercicios[0].carga == 20.1
+    assert bloque1_ejercicios[0].num_ejercicio == 5
     assert bloque1_ejercicios[0].ejercicio.nombre == "Diamond Push-ups"
     assert bloque1_ejercicios[0].ejercicio.patron.nombre == "Tren Superior"
-    assert bloque1_ejercicios[1].repeticiones == 10
-    assert bloque1_ejercicios[1].carga == 50
-    assert bloque1_ejercicios[1].ejercicio.nombre == "Traditional Push-ups"
-    assert bloque1_ejercicios[1].ejercicio.patron.nombre == "Tren Superior"
+    assert bloque2_ejercicios[0].carga == 22
+    assert bloque2_ejercicios[0].ejercicio.nombre == "Diamond Push-ups"
+    assert bloque2_ejercicios[0].ejercicio.patron.nombre == "Tren Superior"
+    assert bloque2_ejercicios[0].repeticiones == 20
 
 
 def test_controller_get_today_sesion(db, client):
@@ -120,13 +177,18 @@ def test_controller_get_today_sesion(db, client):
     create_sesion_db(db)
 
     # Act
-    rv = client.get(
-        f'/api/sesiones/todaySesion', follow_redirects=True).get_json()
+    rv = client.get(f"/api/sesiones/todaySesion", follow_redirects=True).get_json()
 
     # Assert
-    assert len(rv['bloques']) == 2
-    assert len(rv['bloques'][0]["ejercicios"]) == 3
-    assert rv['bloques'][0]["ejercicios"][1]["repeticiones"] == 10
-    assert rv['bloques'][0]["ejercicios"][1]["carga"] == 30
-    assert rv['bloques'][0]["ejercicios"][1]["ejercicio"]["nombre"] == "Traditional Push-ups"
-    assert rv['bloques'][0]["ejercicios"][1]["ejercicio"]["patron"]["nombre"] == "Tren Superior"
+    assert len(rv["bloques"]) == 2
+    assert len(rv["bloques"][0]["ejercicios"]) == 3
+    assert rv["bloques"][0]["ejercicios"][1]["repeticiones"] == 10
+    assert rv["bloques"][0]["ejercicios"][1]["carga"] == 30
+    assert (
+        rv["bloques"][0]["ejercicios"][1]["ejercicio"]["nombre"]
+        == "Traditional Push-ups"
+    )
+    assert (
+        rv["bloques"][0]["ejercicios"][1]["ejercicio"]["patron"]["nombre"]
+        == "Tren Superior"
+    )

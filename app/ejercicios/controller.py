@@ -9,7 +9,7 @@ from app.ejercicios.service import EjercicioService
 api = Namespace("Ejercicios", description="Ejercicios model")
 
 
-@api.route('/')
+@api.route('')
 class EjercicioResource(Resource):
 
     @firebase.jwt_required

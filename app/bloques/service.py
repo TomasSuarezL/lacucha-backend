@@ -10,8 +10,14 @@ class BloqueService:
         return Bloque.query.all()
 
     @staticmethod
-    def create_ejercicio_x_bloque(ejercicio_bloque: EjercicioXBloque) -> EjercicioXBloque:
-        '''
+    def get_bloques_sesion(id_sesion: int) -> List[Bloque]:
+        return Bloque.query.filter_by(id_sesion=id_sesion).all()
+
+    @staticmethod
+    def create_ejercicio_x_bloque(
+        ejercicio_bloque: EjercicioXBloque,
+    ) -> EjercicioXBloque:
+        """
         Crea un un objeto Ejercicio X Bloque en base al dict deserealizado 
 
                 Parameters:
@@ -21,20 +27,22 @@ class BloqueService:
 
                 Returns:
                         EjercicioXBloque: objeto creado si el ejercicio ingresado es valido.  
-        '''
-        ejercicio = EjercicioService.get_por_nombre(
-            ejercicio_bloque.ejercicio.nombre)
-        if (ejercicio is None):
+        """
+        ejercicio = EjercicioService.get_por_nombre(ejercicio_bloque.ejercicio.nombre)
+        if ejercicio is None:
             raise ValidationError("Ejercicio Inválido")
 
         ejercicio_x_bloque = EjercicioXBloque(
-            ejercicio=ejercicio, repeticiones=ejercicio_bloque.repeticiones, carga=ejercicio_bloque.carga)
+            ejercicio=ejercicio,
+            repeticiones=ejercicio_bloque.repeticiones,
+            carga=ejercicio_bloque.carga,
+        )
 
         return ejercicio_x_bloque
 
     @staticmethod
     def create_bloque(bloque: Bloque) -> Bloque:
-        '''
+        """
         Crea un un objeto Bloque en base al Bloque deserealizado por marshmallow-sqlalchemy 
 
                 Parameters:
@@ -45,12 +53,15 @@ class BloqueService:
 
                 Returns:
                         Bloque: objeto creado.  
-        '''
+        """
 
-        ejercicios = [BloqueService.create_ejercicio_x_bloque(
-            ejercicio) for ejercicio in bloque.ejercicios]
+        ejercicios = [
+            BloqueService.create_ejercicio_x_bloque(ejercicio)
+            for ejercicio in bloque.ejercicios
+        ]
 
         bloque = Bloque(
-            ejercicios=ejercicios, series=bloque.series, num_bloque=bloque.num_bloque)
+            ejercicios=ejercicios, series=bloque.series, num_bloque=bloque.num_bloque
+        )
 
         return bloque

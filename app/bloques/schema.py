@@ -14,6 +14,7 @@ class EjercicioXBloqueSchema(SQLAlchemySchema):
 
     idEjerciciosxbloque = auto_field("id_ejerciciosxbloque", dump_only=True)
     ejercicio = Nested(EjercicioSchema(session=db.session, unknown=EXCLUDE))
+    numEjercicio = auto_field("num_ejercicio", required=True)
     repeticiones = auto_field(required=True)
     carga = auto_field(required=True)
 
@@ -23,8 +24,9 @@ class EjercicioXBloqueUpdateSchema(SQLAlchemySchema):
         model = EjercicioXBloque
         load_instance = True
 
-    idEjerciciosxbloque = auto_field("id_ejerciciosxbloque", required=True)
+    idEjerciciosxbloque = auto_field("id_ejerciciosxbloque", required=False)
     ejercicio = Nested(EjercicioSchema(session=db.session, unknown=EXCLUDE))
+    numEjercicio = auto_field("num_ejercicio")
     repeticiones = auto_field()
     carga = auto_field()
 
@@ -48,7 +50,10 @@ class BloqueUpdateSchema(SQLAlchemySchema):
         model = Bloque
         load_instance = True
 
-    idBloque = auto_field("id_bloque", required=True)
+    idBloque = auto_field("id_bloque")
+    idSesion = auto_field("id_sesion", required=False)
     series = auto_field()
     numBloque = auto_field("num_bloque")
     ejercicios = List(Nested(EjercicioXBloqueUpdateSchema(session=db.session)))
+    creadoEn = auto_field("creado_en")
+    actualizadoEn = auto_field("actualizado_en")

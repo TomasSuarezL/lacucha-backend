@@ -123,13 +123,25 @@ def create_sesion_db(db):
     ejInferior = db.session.query(Ejercicio).first()
     ejMedia = db.session.query(Ejercicio).first()
 
-    exbSuperior = EjercicioXBloque(ejercicio=ejSuperior, repeticiones=10, carga=30)
-    exbInferior = EjercicioXBloque(ejercicio=ejInferior, repeticiones=10, carga=50)
-    exbMedia = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
+    exbSuperior = EjercicioXBloque(
+        num_ejercicio=1, ejercicio=ejSuperior, repeticiones=10, carga=30
+    )
+    exbInferior = EjercicioXBloque(
+        num_ejercicio=2, ejercicio=ejInferior, repeticiones=10, carga=50
+    )
+    exbMedia = EjercicioXBloque(
+        num_ejercicio=3, ejercicio=ejMedia, repeticiones=15, carga=10
+    )
 
-    exbSuperior2 = EjercicioXBloque(ejercicio=ejSuperior, repeticiones=10, carga=30)
-    exbInferior2 = EjercicioXBloque(ejercicio=ejInferior, repeticiones=10, carga=50)
-    exbMedia2 = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
+    exbSuperior2 = EjercicioXBloque(
+        num_ejercicio=1, ejercicio=ejSuperior, repeticiones=10, carga=30
+    )
+    exbInferior2 = EjercicioXBloque(
+        num_ejercicio=2, ejercicio=ejInferior, repeticiones=10, carga=50
+    )
+    exbMedia2 = EjercicioXBloque(
+        num_ejercicio=3, ejercicio=ejMedia, repeticiones=15, carga=10
+    )
 
     nuevoBloque1 = Bloque(
         ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4

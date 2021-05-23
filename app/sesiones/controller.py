@@ -1,3 +1,4 @@
+from app.bloques.service import BloqueService
 from datetime import datetime
 from flask import jsonify, request, abort
 from flask_accepts.decorators.decorators import accepts, responds
@@ -10,11 +11,12 @@ from .schema import SesionSchema, SesionUpdateSchema
 api = Namespace("Sesiones", description="Sesiones model")
 
 
-@api.route('/')
+@api.route("")
 class SesionsResource(Resource):
     @firebase.jwt_required
     def get(self):
         from .model import Sesion
+
         sesions = Sesion.query.order_by(Sesion.creado_en.desc()).all()
         return jsonify([ses.to_json() for ses in sesions])
 
@@ -25,23 +27,21 @@ class SesionsResource(Resource):
         try:
             sesion = request.parsed_obj
             if not sesion:
-                return {"message": "No se recibió información del bloque"}, 400
+                return {"message": "No se recibió información de la sesión."}, 400
 
-            newSesion = SesionService.create_sesion(sesion)
-
-            db.session.add(newSesion)
+            db.session.add(sesion)
             db.session.commit()
 
-            return newSesion
+            return sesion
 
         except AttributeError as err:
             print(err)
             abort(400, err)
-        except:
-            abort(400)
+        except Exception as e:
+            abort(400, str(e))
 
 
-@api.route('/<int:id_sesion>')
+@api.route("/<int:id_sesion>")
 class SesionResource(Resource):
     @firebase.jwt_required
     @accepts(schema=SesionUpdateSchema(session=db.session), api=api)

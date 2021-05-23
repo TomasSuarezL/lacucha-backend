@@ -30,3 +30,5 @@ class SesionUpdateSchema(SQLAlchemySchema):
     bloques = List(Nested(BloqueUpdateSchema(session=db.session)))
     fechaEmpezado = auto_field("fecha_empezado")
     fechaFinalizado = auto_field("fecha_finalizado")
+    creadoEn = auto_field("creado_en")
+    actualizadoEn = auto_field("actualizado_en")
