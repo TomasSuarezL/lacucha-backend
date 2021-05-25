@@ -14,8 +14,12 @@ class SesionService:
         return Sesion.query.all()
 
     @staticmethod
+    def get_sesion_id(id: int) -> Sesion:
+        return Sesion.query.get(id)
+
+    @staticmethod
     def create_sesion(sesion: Sesion) -> Sesion:
-        '''
+        """
         Create an Sesion object from the Sesion resulting of the deserealization done by marshmallow-sqlalchemy that has
         just the attributes needed to create a new session.
 
@@ -26,12 +30,10 @@ class SesionService:
 
                 Returns:
                         Sesion: Sesion object created 
-        '''
+        """
 
-        bloques = [BloqueService.create_bloque(
-            bloque) for bloque in sesion.bloques]
+        bloques = [BloqueService.create_bloque(bloque) for bloque in sesion.bloques]
 
-        newSesion = Sesion(
-            bloques=bloques, fecha_empezado=sesion.fecha_empezado)
+        newSesion = Sesion(bloques=bloques, fecha_empezado=sesion.fecha_empezado)
 
         return newSesion

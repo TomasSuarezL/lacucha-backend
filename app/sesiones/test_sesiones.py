@@ -1,7 +1,8 @@
+from app.mesociclos.model import Mesociclo
 from app.ejercicios.model import Ejercicio
 from app.sesiones.model import Sesion
 from app.bloques.model import Bloque, EjercicioXBloque
-from app.conftest import create_sesion_db, create_usuario_db
+from app.conftest import create_mesociclo_db, create_sesion_db, create_usuario_db
 from app.sesiones.service import SesionService
 from datetime import datetime, timedelta
 
@@ -43,7 +44,10 @@ def test_get_today_sesion(db):
 # Sesion CONTROLLER tests
 def test_controller_create_sesion(db, client, token):
     # Arrange
+    create_usuario_db(db)
+    create_mesociclo_db(db)
     sesion_body = {
+        "idMesociclo": 1,
         "fechaEmpezado": str(datetime.utcnow()),
         "bloques": [
             {
@@ -70,19 +74,22 @@ def test_controller_create_sesion(db, client, token):
     ).get_json()
 
     # Assert
-    sesion = Sesion.query.first()
+    mesociclo = Mesociclo.query.first()
 
-    assert len(sesion.bloques) == 1
+    assert len(mesociclo.sesiones) == 3
+    sesion = sorted(mesociclo.sesiones, key=lambda s: s.id_sesion)[2]
     assert len(sesion.bloques[0].ejercicios) == 1
     assert sesion.bloques[0].ejercicios[0].ejercicio.patron.nombre == "Tren Superior"
 
 
 def test_controller_update_sesion(db, client, token):
     # Arrange
-    create_sesion_db(db)
+    create_usuario_db(db)
+    create_mesociclo_db(db)
     id_sesion = 1
 
     sesion_body = {
+        "idMesociclo": 1,
         "idSesion": 1,
         "fechaFinalizado": str(datetime.utcnow() + timedelta(hours=1)),
         "fechaEmpezado": str(datetime(2020, 11, 1)),
@@ -147,7 +154,7 @@ def test_controller_update_sesion(db, client, token):
         headers={"Authorization": f"Bearer {token}"},
     ).get_json()
 
-    sesion = Sesion.query.first()
+    sesion = Sesion.query.get(1)
 
     # Assert
     assert sesion.fecha_finalizado != None
@@ -170,6 +177,25 @@ def test_controller_update_sesion(db, client, token):
     assert bloque2_ejercicios[0].ejercicio.nombre == "Diamond Push-ups"
     assert bloque2_ejercicios[0].ejercicio.patron.nombre == "Tren Superior"
     assert bloque2_ejercicios[0].repeticiones == 20
+
+
+def test_controller_delete_sesion(db, client, token):
+    # Arrange
+    create_usuario_db(db)
+    create_mesociclo_db(db)
+    id_sesion = 1
+
+    # Act
+    rv = client.delete(
+        f"/api/sesiones/{id_sesion}",
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
+
+    # Assert
+    sesion = Sesion.query.get(id_sesion)
+
+    assert sesion == None
 
 
 def test_controller_get_today_sesion(db, client):

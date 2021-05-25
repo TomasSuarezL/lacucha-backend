@@ -186,13 +186,45 @@ def create_mesociclo_db(db):
     ejInferior = db.session.query(Ejercicio).first()
     ejMedia = db.session.query(Ejercicio).first()
 
-    exbSuperior = EjercicioXBloque(ejercicio=ejSuperior, repeticiones=10, carga=30)
-    exbInferior = EjercicioXBloque(ejercicio=ejInferior, repeticiones=10, carga=50)
-    exbMedia = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
+    exbSuperior = EjercicioXBloque(
+        num_ejercicio=1, ejercicio=ejSuperior, repeticiones=10, carga=30
+    )
+    exbInferior = EjercicioXBloque(
+        num_ejercicio=2, ejercicio=ejInferior, repeticiones=10, carga=50
+    )
+    exbMedia = EjercicioXBloque(
+        num_ejercicio=3, ejercicio=ejMedia, repeticiones=15, carga=10
+    )
 
-    exbSuperior2 = EjercicioXBloque(ejercicio=ejSuperior, repeticiones=10, carga=30)
-    exbInferior2 = EjercicioXBloque(ejercicio=ejInferior, repeticiones=10, carga=50)
-    exbMedia2 = EjercicioXBloque(ejercicio=ejMedia, repeticiones=15, carga=10)
+    exbSuperior2 = EjercicioXBloque(
+        num_ejercicio=1, ejercicio=ejSuperior, repeticiones=10, carga=30
+    )
+    exbInferior2 = EjercicioXBloque(
+        num_ejercicio=2, ejercicio=ejInferior, repeticiones=10, carga=50
+    )
+    exbMedia2 = EjercicioXBloque(
+        num_ejercicio=3, ejercicio=ejMedia, repeticiones=15, carga=10
+    )
+
+    exbSuperior3 = EjercicioXBloque(
+        num_ejercicio=1, ejercicio=ejSuperior, repeticiones=10, carga=30
+    )
+    exbInferior3 = EjercicioXBloque(
+        num_ejercicio=2, ejercicio=ejInferior, repeticiones=10, carga=50
+    )
+    exbMedia3 = EjercicioXBloque(
+        num_ejercicio=3, ejercicio=ejMedia, repeticiones=15, carga=10
+    )
+
+    exbSuperior4 = EjercicioXBloque(
+        num_ejercicio=1, ejercicio=ejSuperior, repeticiones=10, carga=30
+    )
+    exbInferior4 = EjercicioXBloque(
+        num_ejercicio=2, ejercicio=ejInferior, repeticiones=10, carga=50
+    )
+    exbMedia4 = EjercicioXBloque(
+        num_ejercicio=3, ejercicio=ejMedia, repeticiones=15, carga=10
+    )
 
     nuevoBloque1 = Bloque(
         ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4
@@ -202,10 +234,10 @@ def create_mesociclo_db(db):
     )
 
     nuevoBloque3 = Bloque(
-        ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4
+        ejercicios=[exbSuperior3, exbInferior3, exbMedia3], num_bloque=1, series=4
     )
     nuevoBloque4 = Bloque(
-        ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4
+        ejercicios=[exbSuperior4, exbInferior4, exbMedia4], num_bloque=2, series=4
     )
 
     nuevaSesion1 = Sesion(

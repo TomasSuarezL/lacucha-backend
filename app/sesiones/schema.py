@@ -14,6 +14,7 @@ class SesionSchema(SQLAlchemySchema):
         unknown = EXCLUDE
 
     idSesion = auto_field("id_sesion", dump_only=True)
+    idMesociclo = auto_field("id_mesociclo")
     bloques = List(Nested(BloqueSchema(session=db.session)))
     fechaEmpezado = auto_field("fecha_empezado", required=True)
     fechaFinalizado = auto_field("fecha_finalizado", dump_only=True)
@@ -27,6 +28,7 @@ class SesionUpdateSchema(SQLAlchemySchema):
         load_instance = True
 
     idSesion = auto_field("id_sesion")
+    idMesociclo = auto_field("id_mesociclo", required=False)
     bloques = List(Nested(BloqueUpdateSchema(session=db.session)))
     fechaEmpezado = auto_field("fecha_empezado")
     fechaFinalizado = auto_field("fecha_finalizado")

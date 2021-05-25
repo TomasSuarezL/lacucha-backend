@@ -1,11 +1,11 @@
-from app.bloques.service import BloqueService
 from datetime import datetime
 from flask import jsonify, request, abort
 from flask_accepts.decorators.decorators import accepts, responds
 from flask_restx import Namespace, Resource
 from app import db, firebase
+from app.sesiones.service import SesionService
+from app.usuarios.service import UsuarioService
 
-from .service import SesionService
 from .schema import SesionSchema, SesionUpdateSchema
 
 api = Namespace("Sesiones", description="Sesiones model")
@@ -58,4 +58,23 @@ class SesionResource(Resource):
 
         except AttributeError as err:
             print(err)
-            abort(400, err)
+            abort(400, str(err))
+
+    @firebase.jwt_required
+    def delete(self, id_sesion):
+        try:
+            usuario = UsuarioService.get_usuario_by_uuid(request.jwt_payload["sub"])
+
+            if usuario.rol != "admin":
+                return abort(403, "No tiene permisos para acceder a este usuario.")
+
+            sesion = SesionService.get_sesion_id(id_sesion)
+
+            db.session.delete(sesion)
+            db.session.commit()
+
+            return True
+
+        except AttributeError as err:
+            print(err)
+            abort(400, str(err))

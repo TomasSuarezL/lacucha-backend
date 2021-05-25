@@ -151,7 +151,7 @@ def test_controller_create_valid_mesociclo(db, client):
     assert mesociclo.sentimiento == None
 
 
-def test_controller_update_valid_mesociclo(db, client):
+def test_controller_update_valid_mesociclo(db, client, token):
     # Arrange
     create_usuario_db(db)
     create_mesociclo_db(db)
@@ -161,8 +161,8 @@ def test_controller_update_valid_mesociclo(db, client):
     mesociclo_data = {
         "idMesociclo": 1,
         "usuario": {"idUsuario": 1},
-        "estado": {"idEstadoMesociclo": 2},
-        "objetivo": {"idObjetivo": 3},
+        "estado": {"idEstadoMesociclo": 2},  ## Cambio estado de pendiente a terminado
+        "objetivo": {"idObjetivo": 3},  ## Cambio objetivo de Acondicionamiento a Fuerza
         "principalTrenSuperior": {"idEjercicio": 2},
         "principalTrenInferior": {"idEjercicio": 5},
         "fechaFinReal": str(datetime.utcnow()),
@@ -175,7 +175,10 @@ def test_controller_update_valid_mesociclo(db, client):
 
     # Act
     response = client.put(
-        f"/api/mesociclos/{id_mesociclo}", json=mesociclo_data, follow_redirects=True
+        f"/api/mesociclos/{id_mesociclo}",
+        json=mesociclo_data,
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
     ).get_json()
 
     # Assert
@@ -189,7 +192,7 @@ def test_controller_update_valid_mesociclo(db, client):
     assert mesociclo.principal_tren_superior.nombre == "Diamond Push-ups"
     assert mesociclo.principal_tren_inferior.nombre == "Bulgarian Squats"
     assert mesociclo.semanas_por_mesociclo == 4
-    assert len(mesociclo.sesiones) == 1
+    assert len(mesociclo.sesiones) == 2
     assert len(mesociclo.sesiones[0].bloques) == 2
     assert len(mesociclo.sesiones[0].bloques[0].ejercicios) == 3
     assert (
