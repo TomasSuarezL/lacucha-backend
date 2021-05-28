@@ -61,7 +61,7 @@ class UsuarioResource(Resource):
     def get(self, uuid):
         usuario = UsuarioService.get_usuario_by_uuid(uuid)
 
-        if usuario.uuid != request.jwt_payload["sub"]:
+        if usuario.uuid != request.jwt_payload["sub"] and usuario.rol != "admin":
             return abort(403, "No tiene permisos para acceder a este usuario.")
 
         return usuario

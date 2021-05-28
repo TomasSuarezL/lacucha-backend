@@ -90,11 +90,12 @@ def test_crear_mesociclo_invalido(db):
 
 
 # Controller
-def test_controller_create_valid_mesociclo(db, client):
+def test_controller_create_valid_mesociclo(db, client, token):
     # Arrange
     create_usuario_db(db)
     sesion_data = {
         "idSesion": None,
+        "numSesion": 3,
         "fechaFinalizado": None,
         "fechaEmpezado": str(datetime.utcnow()),
         "bloques": [
@@ -104,6 +105,7 @@ def test_controller_create_valid_mesociclo(db, client):
                 "numBloque": 1,
                 "ejercicios": [
                     {
+                        "numEjercicio": 1,
                         "ejercicio": {"nombre": "Pull-ups"},
                         "repeticiones": 10,
                         "carga": 20.1,
@@ -127,7 +129,10 @@ def test_controller_create_valid_mesociclo(db, client):
     }
     # Act
     response = client.post(
-        "/api/mesociclos", json=mesociclo_data, follow_redirects=True
+        "/api/mesociclos",
+        json=mesociclo_data,
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
     ).get_json()
 
     # Assert

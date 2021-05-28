@@ -34,6 +34,10 @@ class SesionService:
 
         bloques = [BloqueService.create_bloque(bloque) for bloque in sesion.bloques]
 
-        newSesion = Sesion(bloques=bloques, fecha_empezado=sesion.fecha_empezado)
+        newSesion = Sesion(
+            num_sesion=sesion.num_sesion,
+            bloques=bloques,
+            fecha_empezado=sesion.fecha_empezado,
+        )
 
         return newSesion

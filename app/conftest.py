@@ -241,9 +241,12 @@ def create_mesociclo_db(db):
     )
 
     nuevaSesion1 = Sesion(
-        bloques=[nuevoBloque1, nuevoBloque2], fecha_empezado=datetime.utcnow()
+        num_sesion=1,
+        bloques=[nuevoBloque1, nuevoBloque2],
+        fecha_empezado=datetime.utcnow(),
     )
     nuevaSesion2 = Sesion(
+        num_sesion=2,
         bloques=[nuevoBloque3, nuevoBloque4],
         fecha_empezado=datetime.utcnow() + timedelta(days=1),
     )

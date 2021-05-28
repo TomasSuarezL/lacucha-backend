@@ -11,11 +11,12 @@ from .schema import MesocicloUpdateSchema, MesocicloSchema
 api = Namespace("Mesociclos", description="Mesociclo model")
 
 
-@api.route('/')
+@api.route("")
 class MesociclosResource(Resource):
     @firebase.jwt_required
     def get(self):
         from .model import Mesociclo
+
         mesociclos = Mesociclo.query.order_by(Mesociclo.creado_en.desc()).all()
         return jsonify([mes.to_json() for mes in mesociclos])
 
@@ -43,7 +44,7 @@ class MesociclosResource(Resource):
             return verr, 400
 
 
-@api.route('/<int:id>')
+@api.route("/<int:id>")
 class MesocicloResource(Resource):
     @firebase.jwt_required
     @responds(schema=MesocicloSchema)

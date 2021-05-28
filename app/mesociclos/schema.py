@@ -12,6 +12,7 @@ class EstadoMesocicloSchema(SQLAlchemySchema):
     class Meta:
         model = EstadoMesociclo
         load_instance = True
+        unknown = EXCLUDE
 
     idEstadoMesociclo = auto_field("id_estado_mesociclo")
     descripcion = auto_field(dump_only=True)
@@ -21,6 +22,7 @@ class ObjetivoSchema(SQLAlchemySchema):
     class Meta:
         model = Objetivo
         load_instance = True
+        unknown = EXCLUDE
 
     idObjetivo = auto_field("id_objetivo")
     descripcion = auto_field(dump_only=True)
@@ -30,8 +32,9 @@ class OrganizacionSchema(SQLAlchemySchema):
     class Meta:
         model = Organizacion
         load_instance = True
+        unknown = EXCLUDE
 
-    idOrganizacion = auto_field('id_organizacion')
+    idOrganizacion = auto_field("id_organizacion")
     descripcion = auto_field(dump_only=True)
 
 
@@ -46,12 +49,15 @@ class MesocicloSchema(SQLAlchemySchema):
     estado = Nested(EstadoMesocicloSchema(session=db.session), dump_only=True)
     nivel = Nested(NivelSchema(session=db.session), required=True)
     objetivo = Nested(ObjetivoSchema(session=db.session), required=True)
-    organizacion = Nested(OrganizacionSchema(
-        session=db.session), required=True)
+    organizacion = Nested(OrganizacionSchema(session=db.session), required=True)
     principalTrenSuperior = Nested(
-        EjercicioSchema(session=db.session), attribute='principal_tren_superior', required=False)
+        EjercicioSchema(session=db.session),
+        attribute="principal_tren_superior",
+        required=False,
+    )
     principalTrenInferior = Nested(
-        EjercicioSchema(session=db.session), attribute='principal_tren_inferior')
+        EjercicioSchema(session=db.session), attribute="principal_tren_inferior"
+    )
     semanasPorMesociclo = auto_field("semanas_por_mesociclo", required=True)
     sesionesPorSemana = auto_field("sesiones_por_semana", required=True)
     sesiones = List(Nested(SesionSchema(session=db.session), required=True))
@@ -77,10 +83,12 @@ class MesocicloUpdateSchema(SQLAlchemySchema):
     nivel = Nested(NivelSchema(session=db.session))
     objetivo = Nested(ObjetivoSchema(session=db.session))
     organizacion = Nested(OrganizacionSchema(session=db.session))
-    principalTrenSuperior = Nested(EjercicioSchema(
-        session=db.session), attribute='principal_tren_superior')
-    principalTrenInferior = Nested(EjercicioSchema(
-        session=db.session), attribute='principal_tren_inferior')
+    principalTrenSuperior = Nested(
+        EjercicioSchema(session=db.session), attribute="principal_tren_superior"
+    )
+    principalTrenInferior = Nested(
+        EjercicioSchema(session=db.session), attribute="principal_tren_inferior"
+    )
     semanasPorMesociclo = auto_field("semanas_por_mesociclo", required=False)
     sesionesPorSemana = auto_field("sesiones_por_semana", required=False)
     sesiones = List(Nested(SesionSchema(session=db.session)))

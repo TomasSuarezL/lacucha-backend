@@ -33,6 +33,7 @@ class BloqueService:
             raise ValidationError("Ejercicio Inválido")
 
         ejercicio_x_bloque = EjercicioXBloque(
+            num_ejercicio=ejercicio_bloque.num_ejercicio,
             ejercicio=ejercicio,
             repeticiones=ejercicio_bloque.repeticiones,
             carga=ejercicio_bloque.carga,

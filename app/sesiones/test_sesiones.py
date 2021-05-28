@@ -49,6 +49,7 @@ def test_controller_create_sesion(db, client, token):
     sesion_body = {
         "idMesociclo": 1,
         "fechaEmpezado": str(datetime.utcnow()),
+        "numSesion": 3,
         "bloques": [
             {
                 "numBloque": 1,
