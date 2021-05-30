@@ -166,7 +166,7 @@ def test_controller_update_valid_mesociclo(db, client, token):
     mesociclo_data = {
         "idMesociclo": 1,
         "usuario": {"idUsuario": 1},
-        "estado": {"idEstadoMesociclo": 2},  ## Cambio estado de pendiente a terminado
+        "estado": {"idEstadoMesociclo": 3, "descripcion":""},  ## Cambio estado de pendiente a terminado
         "objetivo": {"idObjetivo": 3},  ## Cambio objetivo de Acondicionamiento a Fuerza
         "principalTrenSuperior": {"idEjercicio": 2},
         "principalTrenInferior": {"idEjercicio": 5},
@@ -191,7 +191,7 @@ def test_controller_update_valid_mesociclo(db, client, token):
 
     assert mesociclo.id_mesociclo == 1
     assert mesociclo.usuario.username == "usuarioprueba"
-    assert mesociclo.estado.descripcion == "Terminado"
+    assert mesociclo.estado.descripcion == "Cancelado"
     assert mesociclo.objetivo.descripcion == "Fuerza"
     assert mesociclo.organizacion.descripcion == "Full Body"
     assert mesociclo.principal_tren_superior.nombre == "Diamond Push-ups"

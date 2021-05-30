@@ -194,3 +194,36 @@ def test_crear_usuario(db, client):
     assert response != None
     assert usuario.email == "user@email.test"
     assert usuario.nombre == "User"
+
+
+def test_actualizar_usuario(db, client, token):
+
+    create_usuario_db(db)
+    _user_uid = "Oueo4BZj6iZPFyXFV04o8n7rVc83"  ## uuid del usuario
+
+    # Arrange
+    usuario_body = {
+        "username": "usertest",  ## cambio username de usuarioprueba a usertest
+        "email": "user@email.test",  ## cambio email de usuario@prueba.com a user@email.test
+        "nombre": "User",  ## cambio nombre de Usuario a User
+        "apellido": "Test",  ## cambio apellido de Prueba a Test
+        "altura": 2.01,
+        "nivel": {"idNivel": 2},  ## cambio nivel de Principiante a Intermedio
+    }
+
+    # Act
+    response = client.put(
+        f"/api/usuarios/{_user_uid}",
+        json=usuario_body,
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
+
+    # Assert
+    usuario = Usuario.query.filter_by(username="usertest").first()
+
+    assert response != None
+    assert usuario.email == "user@email.test"
+    assert usuario.nombre == "User"
+    assert usuario.altura == 2.01
+    assert usuario.nivel.descripcion == "Intermedio"
