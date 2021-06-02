@@ -14,12 +14,12 @@ from app.mesociclos.service import MesocicloService
 from app.usuarios.model import Genero, Nivel, Usuario
 from app.ejercicios.model import Ejercicio, PatronMovimiento
 
-app = create_app(config.DevelopmentConfig)
+app = create_app(config.ProductionConfig)
 
 migrate = Migrate(app, db)
 manager = Manager(app)
 
-manager.add_command('db', MigrateCommand)
+manager.add_command("db", MigrateCommand)
 
 
 @manager.command
@@ -45,22 +45,31 @@ def seed_reference_data():
     db.session.add_all([traccion, rodilla, core, empuje, cadera])
 
     # Ejercicios
-    traditionalPullUps = Ejercicio(
-        nombre="Traditional Push-ups", patron=traccion)
-    diamondPushUps = Ejercicio(
-        nombre="Diamond Push-ups", patron=traccion)
+    traditionalPullUps = Ejercicio(nombre="Traditional Push-ups", patron=traccion)
+    diamondPushUps = Ejercicio(nombre="Diamond Push-ups", patron=traccion)
     pullUps = Ejercicio(nombre="Pull-ups", patron=traccion)
     chinUps = Ejercicio(nombre="Chin-ups", patron=traccion)
-    bulgarianSquats = Ejercicio(
-        nombre="Bulgarian Squats", patron=rodilla)
+    bulgarianSquats = Ejercicio(nombre="Bulgarian Squats", patron=rodilla)
     skateSquats = Ejercicio(nombre="Skate Squats", patron=rodilla)
     cossakSquats = Ejercicio(nombre="Cossak Squats", patron=rodilla)
     hollowPress = Ejercicio(nombre="Hollow Press", patron=core)
     botesMov = Ejercicio(nombre="Botes Movimiento", patron=core)
     lAbs = Ejercicio(nombre="L-Abs", patron=core)
 
-    db.session.add_all([traditionalPullUps, diamondPushUps, pullUps, chinUps,
-                        bulgarianSquats, skateSquats, cossakSquats, hollowPress, botesMov, lAbs])
+    db.session.add_all(
+        [
+            traditionalPullUps,
+            diamondPushUps,
+            pullUps,
+            chinUps,
+            bulgarianSquats,
+            skateSquats,
+            cossakSquats,
+            hollowPress,
+            botesMov,
+            lAbs,
+        ]
+    )
 
     # Niveles
     principiante = Nivel("Principiante")
@@ -112,19 +121,29 @@ def seed_initial_data():
         altura=1.77,
         peso=68,
         nivel=nivel,
-        img_url="https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg"
+        img_url="https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg",
     )
 
     db.session.add(user)
 
     # Mesociclo
-    sesion_data = {"empezado": str(datetime.utcnow()),
-                   "finalizado": str(datetime.utcnow() + timedelta(hours=1)),
-                   "bloques": [{"series": 10,
-                                "numBloque": 1,
-                                "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1}]}
-                               ]
-                   }
+    sesion_data = {
+        "empezado": str(datetime.utcnow()),
+        "finalizado": str(datetime.utcnow() + timedelta(hours=1)),
+        "bloques": [
+            {
+                "series": 10,
+                "numBloque": 1,
+                "ejercicios": [
+                    {
+                        "ejercicio": {"nombre": "Pull-ups"},
+                        "repeticiones": 10,
+                        "carga": 20.1,
+                    }
+                ],
+            }
+        ],
+    }
 
     mesociclo_data = {
         "usuario": "@tsuarezlissi",
@@ -135,7 +154,7 @@ def seed_initial_data():
         "principal_tren_inferior": "Bulgarian Squats",
         "semanas_por_mesociclo": 4,
         "sesiones_por_semana": 3,
-        "sesiones": [sesion_data]
+        "sesiones": [sesion_data],
     }
 
     # Act
@@ -148,28 +167,74 @@ def seed_initial_data():
 
 @manager.command
 def seed_today_session():
-    sesion_data = {"fechaEmpezado": str(datetime.utcnow()),
-                   "bloques": [{"series": 10,
-                                "numBloque": 1,
-                                "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1},
-                                               {"ejercicio": {
-                                                   "nombre": "Bulgarian Squats"}, "repeticiones": 8, "carga": 10.0},
-                                               {"ejercicio": {"nombre": "Hollow Press"}, "repeticiones": 16, "carga": 0.0}]},
-                               {"series": 10,
-                                "numBloque": 2,
-                                "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1},
-                                               {"ejercicio": {
-                                                   "nombre": "Bulgarian Squats"}, "repeticiones": 8, "carga": 10.0},
-                                               {"ejercicio": {"nombre": "Hollow Press"}, "repeticiones": 16, "carga": 0.0}]},
-                               {"series": 10,
-                                "numBloque": 3,
-                                "ejercicios": [{"ejercicio": {"nombre": "Pull-ups"}, "repeticiones": 10, "carga": 20.1},
-                                               {"ejercicio": {
-                                                   "nombre": "Bulgarian Squats"}, "repeticiones": 8, "carga": 10.0},
-                                               {"ejercicio": {"nombre": "Hollow Press"}, "repeticiones": 16, "carga": 0.0}]},
-
-                               ]
-                   }
+    sesion_data = {
+        "fechaEmpezado": str(datetime.utcnow()),
+        "bloques": [
+            {
+                "series": 10,
+                "numBloque": 1,
+                "ejercicios": [
+                    {
+                        "ejercicio": {"nombre": "Pull-ups"},
+                        "repeticiones": 10,
+                        "carga": 20.1,
+                    },
+                    {
+                        "ejercicio": {"nombre": "Bulgarian Squats"},
+                        "repeticiones": 8,
+                        "carga": 10.0,
+                    },
+                    {
+                        "ejercicio": {"nombre": "Hollow Press"},
+                        "repeticiones": 16,
+                        "carga": 0.0,
+                    },
+                ],
+            },
+            {
+                "series": 10,
+                "numBloque": 2,
+                "ejercicios": [
+                    {
+                        "ejercicio": {"nombre": "Pull-ups"},
+                        "repeticiones": 10,
+                        "carga": 20.1,
+                    },
+                    {
+                        "ejercicio": {"nombre": "Bulgarian Squats"},
+                        "repeticiones": 8,
+                        "carga": 10.0,
+                    },
+                    {
+                        "ejercicio": {"nombre": "Hollow Press"},
+                        "repeticiones": 16,
+                        "carga": 0.0,
+                    },
+                ],
+            },
+            {
+                "series": 10,
+                "numBloque": 3,
+                "ejercicios": [
+                    {
+                        "ejercicio": {"nombre": "Pull-ups"},
+                        "repeticiones": 10,
+                        "carga": 20.1,
+                    },
+                    {
+                        "ejercicio": {"nombre": "Bulgarian Squats"},
+                        "repeticiones": 8,
+                        "carga": 10.0,
+                    },
+                    {
+                        "ejercicio": {"nombre": "Hollow Press"},
+                        "repeticiones": 16,
+                        "carga": 0.0,
+                    },
+                ],
+            },
+        ],
+    }
 
     sesion_schema = SesionSchema(session=db.session)
 
@@ -180,5 +245,5 @@ def seed_today_session():
     db.session.commit()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     manager.run()

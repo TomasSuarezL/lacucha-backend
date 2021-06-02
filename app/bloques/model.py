@@ -58,7 +58,7 @@ class EjercicioXBloque(db.Model):
     id_bloque = db.Column(db.Integer, db.ForeignKey("bloques.id_bloque"))
     num_ejercicio = db.Column(db.Integer)
     ejercicio = db.relationship("Ejercicio", uselist=False)
-    bloque = db.relationship("Bloque", uselist=False)
+    # bloque = db.relationship("Bloque", uselist=False)
     repeticiones = db.Column(db.Integer)
     carga = db.Column(db.Float)
 
