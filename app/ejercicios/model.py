@@ -52,7 +52,7 @@ class Ejercicio(db.Model):
         backref=db.backref("ejercicios", lazy=True),
     )
     url_video = db.Column(db.String())
-    peso_inicial = db.Column(db.Integer)
+    peso_inicial = db.Column(db.Float)
     es_temporal = db.Column(db.Boolean)
     creado_en = db.Column(db.DateTime, default=datetime.utcnow)
     actualizado_en = db.Column(db.DateTime, default=None)

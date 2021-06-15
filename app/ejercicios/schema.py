@@ -42,7 +42,7 @@ class EjercicioPostSchema(SQLAlchemySchema):
         unknown = EXCLUDE
 
     nombre = auto_field(required=True)
-    patron = Pluck(PatronSchema(session=db.session), "nombre", required=True)
+    patron = Nested(PatronSchema(session=db.session))
     urlVideo = auto_field("url_video")
     pesoInicial = auto_field("peso_inicial")
     esTemporal = auto_field("es_temporal")

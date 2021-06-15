@@ -103,7 +103,7 @@ class Mesociclo(db.Model):
         "Sesion",
         lazy="subquery",
         backref=db.backref("mesociclo", lazy=True),
-        order_by="Sesion.fecha_empezado",
+        order_by="Sesion.num_sesion",
     )
     # Fin de mesociclo
     fecha_fin_real = db.Column(db.DateTime, default=None)

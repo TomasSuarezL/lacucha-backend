@@ -66,13 +66,14 @@ def test_service_no_crea_ejercicio_con_patron_inexistente(db, nombre, patron):
 
 # CONTROLLER TESTS
 def test_controller_list_ejercicios(db, client, token):
+    db
     rv = client.get(
-        "/api/ejercicios?patron=Tren Superior",
+        "/api/ejercicios",
         follow_redirects=True,
         headers={"Authorization": f"Bearer {token}"},
     ).get_json()
 
-    assert len(rv) == 4
+    assert len(rv) == 10
 
 
 def test_controller_crear_ejercicio(db, client):
@@ -107,6 +108,35 @@ def test_controller_update_ejercicio(db, client, token):
     ).get_json()
 
     ejercicio = Ejercicio.query.get(1)
+
+    # Assert
+    assert ejercicio.nombre == "Prueba Push Ups"
+    assert ejercicio.patron.nombre == "Zona Media"
+    assert ejercicio.url_video == "https://prueba.com/prueba"
+    assert ejercicio.peso_inicial == 15
+    assert ejercicio.es_temporal == 1
+
+
+def test_controller_create_ejercicio(db, client, token):
+    create_usuario_db(db)
+    # Arrange
+    ejercicio_body = {
+        "nombre": "Prueba Push Ups",
+        "patron": {"idPatron": 3},  ## patron a Zona Media
+        "urlVideo": "https://prueba.com/prueba",
+        "pesoInicial": 15,
+        "esTemporal": 1,
+    }
+
+    # Act
+    rv = client.post(
+        f"/api/ejercicios",
+        json=ejercicio_body,
+        follow_redirects=True,
+        headers={"Authorization": f"Bearer {token}"},
+    ).get_json()
+
+    ejercicio = Ejercicio.query.filter_by(nombre="Prueba Push Ups").first()
 
     # Assert
     assert ejercicio.nombre == "Prueba Push Ups"

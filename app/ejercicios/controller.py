@@ -28,17 +28,27 @@ class EjercicioResource(Resource):
 
     @firebase.jwt_required
     @accepts(schema=EjercicioPostSchema(session=db.session), api=api)
-    @responds(schema=EjercicioPostSchema)
+    @responds(schema=EjercicioSchema)
     def post(self):
-        body = request.get_json(force=True)
-        _patron = body.get("patron", None)
-        _nombre = body.get("nombre", None)
-        ejercicio = EjercicioService.create_ejercicio(_nombre, _patron)
+        try:
+            usuario = UsuarioService.get_usuario_by_uuid(request.jwt_payload["sub"])
 
-        db.session.add(ejercicio)
-        db.session.commit()
+            if usuario.rol != "admin":
+                return abort(403, "No tiene permisos para acceder a este recurso.")
 
-        return ejercicio
+            ejercicio = request.parsed_obj
+
+            db.session.add(ejercicio)
+            db.session.commit()
+            return ejercicio
+
+        except AttributeError as err:
+            print(err)
+            return abort(400, str(err))
+
+        except Exception as e:
+            print(str(e))
+            return abort(400, e)
 
 
 @api.route("/<string:id>")
@@ -51,7 +61,7 @@ class EjercicioUpdateResource(Resource):
             usuario = UsuarioService.get_usuario_by_uuid(request.jwt_payload["sub"])
 
             if usuario.rol != "admin":
-                return abort(403, "No tiene permisos para acceder a este usuario.")
+                return abort(403, "No tiene permisos para acceder a este recurso.")
 
             ejercicio = request.parsed_obj
 
