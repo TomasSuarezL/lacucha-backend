@@ -3,7 +3,6 @@ from app.sesiones.service import SesionService
 from datetime import timedelta, datetime
 import os
 
-from sqlalchemy.orm import session
 import config
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
@@ -14,7 +13,7 @@ from app.mesociclos.service import MesocicloService
 from app.usuarios.model import Genero, Nivel, Usuario
 from app.ejercicios.model import Ejercicio, PatronMovimiento
 
-app = create_app(config.ProductionConfig)
+app = create_app(config.DevelopmentConfig)
 
 migrate = Migrate(app, db)
 manager = Manager(app)

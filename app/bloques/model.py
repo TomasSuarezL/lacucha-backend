@@ -74,7 +74,7 @@ class EjercicioXBloque(db.Model):
     def to_json(self):
         return {
             "id": self.id_ejerciciosxbloque,
-            "num_ejercicio": self.num_ejercicio.nombre,
+            "num_ejercicio": self.num_ejercicio,
             "ejercicio": self.ejercicio.nombre,
             "patron": self.ejercicio.patron.nombre,
             "carga": self.carga,

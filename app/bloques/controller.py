@@ -1,5 +1,4 @@
 from app.usuarios.service import UsuarioService
-from marshmallow.utils import EXCLUDE
 from marshmallow.exceptions import ValidationError
 from flask import jsonify, request, abort
 from flask_restx import Namespace, Resource
