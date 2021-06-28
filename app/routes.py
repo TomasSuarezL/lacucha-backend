@@ -4,6 +4,7 @@ def register_routes(api, app, root="api"):
     from app.sesiones import register_routes as attach_sesiones
     from app.mesociclos import register_routes as attach_mesociclos
     from app.usuarios import register_routes as attach_usuarios
+    from app.plantillas import register_routes as attach_plantillas
 
     # Add routes
     attach_ejercicios(api, app)
@@ -11,3 +12,4 @@ def register_routes(api, app, root="api"):
     attach_bloques(api, app)
     attach_mesociclos(api, app)
     attach_usuarios(api, app)
+    attach_plantillas(api, app)

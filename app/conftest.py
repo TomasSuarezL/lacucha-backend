@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from app.ejercicios.model import Ejercicio, PatronMovimiento
 from app.bloques.model import Bloque, EjercicioXBloque
 from app.sesiones.model import Sesion
+from app.plantillas.model import Plantilla, SesionXPlantilla
 
 import pytest
 
@@ -274,4 +275,90 @@ def create_mesociclo_db(db):
     )
 
     db.session.add(mesociclo)
+    db.session.commit()
+
+
+def create_plantilla_db(db):
+    ejSuperior = db.session.query(Ejercicio).first()
+    ejInferior = db.session.query(Ejercicio).first()
+    ejMedia = db.session.query(Ejercicio).first()
+
+    exbSuperior = EjercicioXBloque(
+        num_ejercicio=1, ejercicio=ejSuperior, repeticiones=10, carga=30
+    )
+    exbInferior = EjercicioXBloque(
+        num_ejercicio=2, ejercicio=ejInferior, repeticiones=10, carga=50
+    )
+    exbMedia = EjercicioXBloque(
+        num_ejercicio=3, ejercicio=ejMedia, repeticiones=15, carga=10
+    )
+
+    exbSuperior2 = EjercicioXBloque(
+        num_ejercicio=1, ejercicio=ejSuperior, repeticiones=10, carga=30
+    )
+    exbInferior2 = EjercicioXBloque(
+        num_ejercicio=2, ejercicio=ejInferior, repeticiones=10, carga=50
+    )
+    exbMedia2 = EjercicioXBloque(
+        num_ejercicio=3, ejercicio=ejMedia, repeticiones=15, carga=10
+    )
+
+    exbSuperior3 = EjercicioXBloque(
+        num_ejercicio=1, ejercicio=ejSuperior, repeticiones=10, carga=30
+    )
+    exbInferior3 = EjercicioXBloque(
+        num_ejercicio=2, ejercicio=ejInferior, repeticiones=10, carga=50
+    )
+    exbMedia3 = EjercicioXBloque(
+        num_ejercicio=3, ejercicio=ejMedia, repeticiones=15, carga=10
+    )
+
+    exbSuperior4 = EjercicioXBloque(
+        num_ejercicio=1, ejercicio=ejSuperior, repeticiones=10, carga=30
+    )
+    exbInferior4 = EjercicioXBloque(
+        num_ejercicio=2, ejercicio=ejInferior, repeticiones=10, carga=50
+    )
+    exbMedia4 = EjercicioXBloque(
+        num_ejercicio=3, ejercicio=ejMedia, repeticiones=15, carga=10
+    )
+
+    nuevoBloque1 = Bloque(
+        ejercicios=[exbSuperior, exbInferior, exbMedia], num_bloque=1, series=4
+    )
+    nuevoBloque2 = Bloque(
+        ejercicios=[exbSuperior2, exbInferior2, exbMedia2], num_bloque=2, series=4
+    )
+
+    nuevoBloque3 = Bloque(
+        ejercicios=[exbSuperior3, exbInferior3, exbMedia3], num_bloque=1, series=4
+    )
+    nuevoBloque4 = Bloque(
+        ejercicios=[exbSuperior4, exbInferior4, exbMedia4], num_bloque=2, series=4
+    )
+
+    nuevaSesion1 = Sesion(
+        num_sesion=1,
+        bloques=[nuevoBloque1, nuevoBloque2],
+        fecha_empezado=datetime.utcnow(),
+    )
+    nuevaSesion2 = Sesion(
+        num_sesion=2,
+        bloques=[nuevoBloque3, nuevoBloque4],
+        fecha_empezado=datetime.utcnow() + timedelta(days=1),
+    )
+
+    nivel = db.session.query(Nivel).first()
+    objetivo = db.session.query(Objetivo).first()
+    organizacion = db.session.query(Organizacion).first()
+
+    plantilla = Plantilla(
+        nivel=nivel,
+        objetivo=objetivo,
+        organizacion=organizacion,
+        sesiones_por_semana=3,
+        sesiones=[SesionXPlantilla(nuevaSesion1), SesionXPlantilla(nuevaSesion2)],
+    )
+
+    db.session.add(plantilla)
     db.session.commit()

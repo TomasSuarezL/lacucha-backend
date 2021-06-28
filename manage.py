@@ -3,7 +3,6 @@ from app.sesiones.service import SesionService
 from datetime import timedelta, datetime
 import os
 
-from sqlalchemy.orm import session
 import config
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
