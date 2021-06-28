@@ -76,7 +76,7 @@ class SesionXPlantilla(db.Model):
         primary_key=True,
         unique=True,
     )
-    id_ejercicio = db.Column(db.Integer, db.ForeignKey("sesiones.id_sesion"))
+    id_sesion = db.Column(db.Integer, db.ForeignKey("sesiones.id_sesion"))
     id_plantilla = db.Column(db.Integer, db.ForeignKey("plantillas.id_plantilla"))
     sesion = db.relationship("Sesion", uselist=False, cascade="all")
 
